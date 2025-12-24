@@ -3,11 +3,12 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const works = await getWorks();
-    const work = works.find(w => w.id === params.id);
+    const work = works.find(w => w.id === id);
     
     if (!work) {
       return NextResponse.json({ error: 'Work not found' }, { status: 404 });
