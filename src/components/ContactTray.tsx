@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiLinkedinBoxFill, RiMailLine, RiFileTextLine, RiGithubFill, RiPhoneLine } from "react-icons/ri";
 
 interface ContactOption {
@@ -13,13 +13,29 @@ interface ContactOption {
 
 export default function ContactTray() {
     const [hoveredId, setHoveredId] = useState<string | null>(null);
+    const [resumeUrl, setResumeUrl] = useState<string>("");
+
+    useEffect(() => {
+        const fetchResume = async () => {
+            try {
+                const res = await fetch('/api/about');
+                const data = await res.json();
+                if (data?.resume) {
+                    setResumeUrl(data.resume);
+                }
+            } catch (error) {
+                console.error('Error fetching resume:', error);
+            }
+        };
+        fetchResume();
+    }, []);
 
     const contactOptions: ContactOption[] = [
         {
             id: "resume",
             name: "Resume",
             icon: <RiFileTextLine className="w-full h-full" />,
-            href: "https://your-resume-link.com",
+            href: resumeUrl || '#',
             hoverColor: "hover:text-gray-600"
         },
         {
@@ -48,22 +64,27 @@ export default function ContactTray() {
                             href={option.href}
                             target={["linkedin", "phone", "resume"].includes(option.id) ? "_blank" : undefined}
                             rel={["linkedin", "phone", "resume"].includes(option.id) ? "noopener noreferrer" : undefined}
+                            onClick={() => {
+                                if (option.id === "email") {
+                                    window.location.href = option.href;
+                                }
+                            }}
                             onMouseEnter={() => setHoveredId(option.id)}
                             onMouseLeave={() => setHoveredId(null)}
                             className={`
                                 group relative flex flex-col items-center justify-end
                                 transition-all duration-300 ease-out
-                                ${hoveredId === option.id 
-                                    ? 'scale-125 -translate-y-2' 
-                                    : hoveredId 
-                                        ? 'scale-95' 
+                                ${hoveredId === option.id
+                                    ? 'scale-125 -translate-y-2'
+                                    : hoveredId
+                                        ? 'scale-95'
                                         : 'scale-100'
                                 }
                             `}
                         >
                             {/* Icon Container */}
                             <div className={`
-                                relative bg-gradient-to-br from-gray-100 to-gray-200 
+                                relative bg-gradient-to-br from-gray-100 to-gray-200
                                 rounded-2xl p-4 shadow-lg
                                 transition-all duration-300
                                 ${hoveredId === option.id ? 'shadow-2xl' : ''}
@@ -81,8 +102,8 @@ export default function ContactTray() {
                                 absolute -top-8 left-1/2 transform -translate-x-1/2
                                 bg-gray-900 text-white text-xs font-medium px-3 py-1 rounded-lg
                                 whitespace-nowrap transition-all duration-200
-                                ${hoveredId === option.id 
-                                    ? 'opacity-100 translate-y-0' 
+                                ${hoveredId === option.id
+                                    ? 'opacity-100 translate-y-0'
                                     : 'opacity-0 translate-y-2 pointer-events-none'
                                 }
                             `}>

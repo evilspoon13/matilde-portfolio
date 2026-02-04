@@ -11,7 +11,7 @@ export default function Portfolio() {
                 <div className="max-w-5xl mx-auto space-y-12">
                     
                     {/* Page Title */}
-                    <motion.div 
+                    <motion.div
                         className="text-center space-y-4"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -21,7 +21,7 @@ export default function Portfolio() {
                             Portfolio
                         </h1>
                         <p className="text-xl md:text-2xl text-gray-600">
-                            View my resume, portfolio, and contact information
+                            A closer look at what I've been working on
                         </p>
                     </motion.div>
 
@@ -47,10 +47,10 @@ export default function Portfolio() {
                                     </h2>
                                 </div>
                                 <p className="text-gray-600 text-lg">
-                                    Explore my complete collection of architectural projects, design work, and creative endeavors.
+                                    From concept sketches to finished builds — here's where I keep everything.
                                 </p>
                                 <div className="flex items-center gap-2 text-gray-900 font-semibold group-hover:gap-4 transition-all">
-                                    <span>View Portfolio</span>
+                                    <span>Take a look</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                         <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                                     </svg>

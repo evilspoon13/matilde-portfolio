@@ -37,7 +37,7 @@ export default function LinkCard({ title, description, linkUrl, linkText }: Link
                         href={linkUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 bg-gradient-to-br from-gray-100 to-gray-200 hover:from-blue-50 hover:to-blue-100 text-gray-800 hover:text-blue-600 font-semibold text-xl md:text-2xl px-8 py-4 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-300 hover:border-blue-400"
+                        className="inline-flex items-center gap-3 bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-800 hover:text-gray-900 font-semibold text-xl md:text-2xl px-8 py-4 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-300 hover:border-gray-900"
                         whileHover={{ scale: 1.05, y: -3 }}
                         whileTap={{ scale: 0.98 }}
                         transition={{ duration: 0.3 }}

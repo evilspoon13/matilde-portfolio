@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Syne } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import BackgroundImage from "@/components/BackgroundImage";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
 });
 
@@ -27,9 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${syne.variable} font-sans antialiased`}
       >
-        <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
+        <BackgroundImage />
+        <div className="relative z-10 flex flex-col min-h-screen bg-gradient-to-br from-gray-50/70 to-gray-100/70 overflow-x-hidden">
             <NavBar/>
             <main className="flex-grow">
               {children}

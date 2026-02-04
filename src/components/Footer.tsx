@@ -20,13 +20,14 @@ export default function Footer(){
                             href="https://www.linkedin.com/in/matilde-crisp-a34a25254/" 
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-white hover:text-blue-400 transition-colors group flex items-center gap-2"
+                            className="text-white hover:text-gray-300 transition-colors group flex items-center gap-2"
                         >
                             <RiLinkedinBoxFill className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12" />
                             <span className="text-lg md:text-xl lg:text-2xl font-semibold">LinkedIn</span>
                         </a>
-                        <a 
+                        <a
                             href="mailto:matilde.crisp@tamu.edu"
+                            onClick={() => window.location.href = "mailto:matilde.crisp@tamu.edu"}
                             className="text-white hover:text-gray-300 transition-colors group flex items-center gap-2"
                         >
                             <RiMailLine className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12" />

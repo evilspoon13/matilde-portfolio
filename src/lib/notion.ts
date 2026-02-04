@@ -21,10 +21,14 @@ export async function getAbout(): Promise<About | null> {
       id: page.id,
       name: page.properties.Name?.title[0]?.plain_text || '',
       jobTitle: page.properties['Job Title']?.rich_text[0]?.plain_text || '',
-      profileImage: page.properties['Profile Image']?.files[0]?.file?.url || 
+      profileImage: page.properties['Profile Image']?.files[0]?.file?.url ||
                     page.properties['Profile Image']?.files[0]?.external?.url || '',
       aboutText: page.properties['About Text']?.rich_text[0]?.plain_text || '',
       skills: page.properties.Skills?.multi_select?.map((s: any) => s.name) || [],
+      resume: page.properties.Resume?.files[0]?.file?.url ||
+              page.properties.Resume?.files[0]?.external?.url || '',
+      background: page.properties.Background?.files[0]?.file?.url ||
+                  page.properties.Background?.files[0]?.external?.url || '',
     };
   } catch (error) {
     console.error('Error in getAbout:', error);

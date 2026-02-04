@@ -5,6 +5,8 @@ export interface About {
   profileImage: string;
   aboutText: string;
   skills: string[];
+  resume: string;
+  background: string;
 }
 
 export interface Education {

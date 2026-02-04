@@ -136,195 +136,186 @@ export default function Home() {
 
     return (
         <Transition>
-            <div className="w-full scroll-smooth snap-y snap-proximity">
-                
-                {/* Hero Section - Reduced Height */}
-                <motion.section 
-                    ref={heroRef}
-                    className="relative min-h-[60vh] flex flex-col items-center justify-center px-6 snap-start snap-always pt-20"
-                    style={{ opacity, scale }}
-                >
-                    <div className="text-center space-y-8 max-w-5xl mx-auto">
-                        <motion.div 
-                            className="space-y-6"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8 }}
-                        >
-                            <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-gray-900 tracking-tight leading-tight">
-                                {aboutData.name}
-                            </h1>
-                            <p className="text-3xl md:text-4xl lg:text-5xl text-gray-600 font-light">
-                                {aboutData.jobTitle}
-                            </p>
-                        </motion.div>
+            <div className="w-full">
+                <div className="max-w-7xl mx-auto px-6 py-8">
 
+                    {/* Hero + About Section */}
+                    <motion.section
+                        ref={heroRef}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[50vh]"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        {/* Left - Profile Image */}
+                        {aboutData.profileImage && (
+                            <motion.div
+                                className="relative aspect-square max-w-md mx-auto lg:mx-0 w-full"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.6 }}
+                            >
+                                <Image
+                                    src={aboutData.profileImage}
+                                    alt={aboutData.name}
+                                    fill
+                                    className="object-cover rounded-2xl shadow-2xl"
+                                    unoptimized
+                                />
+                            </motion.div>
+                        )}
+
+                        {/* Right - Name, Title, About */}
                         <motion.div
-                            className="flex flex-col sm:flex-row gap-5 justify-center items-center pt-8"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="space-y-6 text-center lg:text-left"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
                         >
-                            <Link 
-                                href="/works"
-                                className="group inline-flex items-center gap-3 bg-gray-900 text-white font-semibold text-xl px-12 py-5 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-xl hover:shadow-2xl"
-                            >
-                                View My Work
-                                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                        </motion.div>
-                    </div>
-                </motion.section>
+                            <div>
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 tracking-tight">
+                                    {aboutData.name}
+                                </h1>
+                                <p className="text-2xl md:text-3xl text-gray-600 font-light mt-2">
+                                    {aboutData.jobTitle}
+                                </p>
+                            </div>
 
-                {/* Content Sections */}
-                <div ref={contentRef} className="w-full snap-start">
-                    <div className="max-w-6xl mx-auto px-6 pt-12 pb-20 space-y-24">
-                        
-                        {/* About Text */}
-                        <motion.section 
-                            className="max-w-4xl mx-auto"
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            transition={{ duration: 0.8 }}
-                        >
-                            <p className="text-xl md:text-2xl text-gray-700 leading-relaxed text-center font-light">
-                                {aboutData.aboutText}
-                            </p>
-                        </motion.section>
+                            {aboutData.aboutText && (
+                                <p className="text-lg text-gray-700 leading-relaxed">
+                                    {aboutData.aboutText}
+                                </p>
+                            )}
 
-                        {/* Skills */}
-                        {aboutData.skills && aboutData.skills.length > 0 && (
-                            <motion.section 
-                                className="max-w-4xl mx-auto"
-                                initial={{ opacity: 0, y: 40 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-100px" }}
-                                transition={{ duration: 0.8 }}
-                            >
-                                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10 text-center">Expertise</h2>
-                                <div className="flex flex-wrap gap-4 justify-center">
+                            {/* Skills */}
+                            {aboutData.skills && aboutData.skills.length > 0 && (
+                                <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
                                     {aboutData.skills.map((skill, index) => (
-                                        <motion.span
+                                        <span
                                             key={index}
-                                            className="bg-gray-900 text-white px-6 py-3 rounded-full text-base font-medium hover:bg-gray-800 transition-colors cursor-pointer"
-                                            whileHover={{ scale: 1.1, rotate: 2 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            whileInView={{ opacity: 1, scale: 1 }}
-                                            viewport={{ once: true }}
-                                            transition={{ duration: 0.4, delay: index * 0.05 }}
+                                            className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium"
                                         >
                                             {skill}
-                                        </motion.span>
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="flex justify-center lg:justify-start">
+                                <Link
+                                    href="/works"
+                                    className="group inline-flex items-center gap-2 bg-gray-900 text-white font-semibold text-lg px-8 py-4 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                >
+                                    View My Work
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            </div>
+                        </motion.div>
+                    </motion.section>
+
+                    {/* Education & Experience Grid */}
+                    <div ref={contentRef} className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-12">
+
+                        {/* Education */}
+                        {education.length > 0 && (
+                            <motion.section
+                                className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                                    Education
+                                </h2>
+
+                                <div className="space-y-6">
+                                    {education.map((edu, index) => (
+                                        <motion.div
+                                            key={edu.id}
+                                            className="relative pl-6 border-l-2 border-gray-300 hover:border-gray-900 transition-colors"
+                                            initial={{ opacity: 0, x: -10 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.4, delay: index * 0.1 }}
+                                        >
+                                            <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-gray-900"></div>
+                                            <h3 className="text-lg font-bold text-gray-900">
+                                                {edu.degree} {edu.fieldOfStudy && `in ${edu.fieldOfStudy}`}
+                                            </h3>
+                                            <p className="text-gray-600 font-medium">
+                                                {edu.school}
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                {formatDateRange(edu.startDate, edu.endDate, edu.current)}
+                                            </p>
+                                            {edu.description && (
+                                                <p className="text-gray-700 text-sm mt-2">
+                                                    {edu.description}
+                                                </p>
+                                            )}
+                                        </motion.div>
                                     ))}
                                 </div>
                             </motion.section>
                         )}
 
-                        {/* Education & Experience */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                            
-                            {/* Education */}
-                            {education.length > 0 && (
-                                <motion.section
-                                    initial={{ opacity: 0, x: -40 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true, margin: "-100px" }}
-                                    transition={{ duration: 0.8 }}
-                                >
-                                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10">
-                                        Education
-                                    </h2>
-                                    
-                                    <div className="space-y-10">
-                                        {education.map((edu, index) => (
-                                            <motion.div 
-                                                key={edu.id}
-                                                className="relative pl-8 border-l-2 border-gray-300 hover:border-gray-900 transition-colors group cursor-pointer"
-                                                whileHover={{ x: 8 }}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                whileInView={{ opacity: 1, x: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                            >
-                                                <div className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-gray-900 group-hover:scale-125 transition-transform"></div>
-                                                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                                    {edu.degree} {edu.fieldOfStudy && `in ${edu.fieldOfStudy}`}
-                                                </h3>
-                                                <p className="text-gray-600 font-medium mb-1">
-                                                    {edu.school}
-                                                </p>
-                                                <p className="text-sm text-gray-500 mb-3">
-                                                    {formatDateRange(edu.startDate, edu.endDate, edu.current)}
-                                                </p>
-                                                {edu.description && (
-                                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                                        {edu.description}
-                                                    </p>
-                                                )}
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.section>
-                            )}
+                        {/* Experience */}
+                        {experience.length > 0 && (
+                            <motion.section
+                                className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: 0.1 }}
+                            >
+                                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                                    Experience
+                                </h2>
 
-                            {/* Experience */}
-                            {experience.length > 0 && (
-                                <motion.section
-                                    initial={{ opacity: 0, x: 40 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true, margin: "-100px" }}
-                                    transition={{ duration: 0.8 }}
-                                >
-                                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10">
-                                        Experience
-                                    </h2>
-                                    
-                                    <div className="space-y-10">
-                                        {experience.map((exp, index) => (
-                                            <motion.div 
-                                                key={exp.id}
-                                                className="relative pl-8 border-l-2 border-gray-300 hover:border-gray-900 transition-colors group cursor-pointer"
-                                                whileHover={{ x: 8 }}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                whileInView={{ opacity: 1, x: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                            >
-                                                <div className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-gray-900 group-hover:scale-125 transition-transform"></div>
-                                                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                                    {exp.role}
-                                                </h3>
-                                                <p className="text-gray-600 font-medium mb-1">
-                                                    {exp.company}
+                                <div className="space-y-6">
+                                    {experience.map((exp, index) => (
+                                        <motion.div
+                                            key={exp.id}
+                                            className="relative pl-6 border-l-2 border-gray-300 hover:border-gray-900 transition-colors"
+                                            initial={{ opacity: 0, x: -10 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.4, delay: index * 0.1 }}
+                                        >
+                                            <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-gray-900"></div>
+                                            <h3 className="text-lg font-bold text-gray-900">
+                                                {exp.role}
+                                            </h3>
+                                            <p className="text-gray-600 font-medium">
+                                                {exp.company}
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                {formatDateRange(exp.startDate, exp.endDate, exp.current)}
+                                            </p>
+                                            {exp.summary && (
+                                                <p className="text-gray-700 text-sm mt-2">
+                                                    {exp.summary}
                                                 </p>
-                                                <p className="text-sm text-gray-500 mb-3">
-                                                    {formatDateRange(exp.startDate, exp.endDate, exp.current)}
-                                                </p>
-                                                {exp.summary && (
-                                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                                        {exp.summary}
-                                                    </p>
-                                                )}
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.section>
-                            )}
-                        </div>
-
-                        {/* Contact Card */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            transition={{ duration: 0.8 }}
-                        >
-                            <ContactTray />
-                        </motion.div>
-
+                                            )}
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </motion.section>
+                        )}
                     </div>
+
+                    {/* Contact Tray */}
+                    <motion.div
+                        className="mt-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <ContactTray />
+                    </motion.div>
+
                 </div>
             </div>
         </Transition>
