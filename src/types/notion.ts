@@ -6,6 +6,7 @@ export interface About {
   aboutText: string;
   skills: string[];
   resume: string;
+  portfolio: string;
   background: string;
 }
 

@@ -27,6 +27,8 @@ export async function getAbout(): Promise<About | null> {
       skills: page.properties.Skills?.multi_select?.map((s: any) => s.name) || [],
       resume: page.properties.Resume?.files[0]?.file?.url ||
               page.properties.Resume?.files[0]?.external?.url || '',
+      portfolio: page.properties.Portfolio?.files[0]?.file?.url ||
+                 page.properties.Portfolio?.files[0]?.external?.url || '',
       background: page.properties.Background?.files[0]?.file?.url ||
                   page.properties.Background?.files[0]?.external?.url || '',
     };
