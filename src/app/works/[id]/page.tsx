@@ -69,7 +69,7 @@ export default function WorkDetail() {
       <div className="w-full text-neutral-900">
 
         {/* Back */}
-        <div className="max-w-5xl mx-auto px-6 pt-20">
+        <div className="max-w-7xl mx-auto px-6 pt-20">
           <a
             href="/works"
             className="text-xs uppercase tracking-[0.25em] text-neutral-400 hover:text-neutral-900 transition-colors"
@@ -79,77 +79,96 @@ export default function WorkDetail() {
         </div>
 
         {/* Header Card */}
-        <section className="max-w-5xl mx-auto px-6 pt-10 pb-24">
+        <section className="max-w-7xl mx-auto px-6 pt-10 pb-12">
 
           <div className="
             bg-white
             border border-neutral-200
             rounded-3xl
-            px-10 py-14
+            px-6 py-10 md:px-10 md:py-14
             shadow-[0_20px_60px_rgba(0,0,0,0.04)]
-            space-y-10
           ">
 
-            <motion.h1
-              className="text-4xl md:text-6xl font-semibold leading-tight tracking-tight"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              {work.title}
-            </motion.h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
 
-            <motion.div
-              className="text-xs uppercase tracking-[0.25em] text-neutral-500"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {work.date}
-              {work.location && ` • ${work.location}`}
-              {work.client && ` • ${work.client}`}
-            </motion.div>
-
-            <motion.p
-              className="text-lg leading-relaxed text-neutral-700 max-w-3xl whitespace-pre-line"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              {work.description}
-            </motion.p>
-
-            {work.details?.length > 0 && (
-              <ul className="space-y-3 pt-2">
-                {work.details.map((detail, index) => (
-                  <li key={index} className="text-neutral-600 flex gap-3">
-                    <span className="text-neutral-400">•</span>
-                    <span>{detail}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {work.pdf && (
-              <div className="pt-6">
-                <a
-                  href={work.pdf}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="
-                    inline-block
-                    px-6 py-3
-                    border border-neutral-900
-                    rounded-full
-                    text-sm tracking-wide
-                    hover:bg-neutral-900 hover:text-white
-                    transition-all duration-300
-                  "
+              {/* Left: Title, metadata, PDF link */}
+              <div>
+                <motion.h1
+                  className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
                 >
-                  View Project PDF
-                </a>
+                  {work.title}
+                </motion.h1>
+
+                <motion.div
+                  className="text-xs uppercase tracking-[0.25em] text-neutral-500 mt-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {work.date}
+                  {work.location && ` • ${work.location}`}
+                  {work.client && ` • ${work.client}`}
+                </motion.div>
+
+                {work.pdf && (
+                  <motion.div
+                    className="mt-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <a
+                      href={work.pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="
+                        inline-block
+                        px-6 py-3
+                        border border-neutral-900
+                        rounded-full
+                        text-sm tracking-wide
+                        hover:bg-neutral-900 hover:text-white
+                        transition-all duration-300
+                      "
+                    >
+                      View Project PDF
+                    </a>
+                  </motion.div>
+                )}
               </div>
-            )}
+
+              {/* Right: Description and details */}
+              <div>
+                <motion.p
+                  className="text-lg leading-relaxed text-neutral-700 whitespace-pre-line"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  {work.description}
+                </motion.p>
+
+                {work.details?.length > 0 && (
+                  <motion.ul
+                    className="space-y-3 mt-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    {work.details.map((detail, index) => (
+                      <li key={index} className="text-neutral-600 flex gap-3">
+                        <span className="text-neutral-400">•</span>
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </motion.ul>
+                )}
+              </div>
+
+            </div>
 
           </div>
         </section>
