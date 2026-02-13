@@ -62,8 +62,16 @@ export default function Works() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Selected Works
+            Works
           </motion.h1>
+          <motion.p
+            className="text-sm uppercase tracking-[0.25em] text-neutral-500"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Spacial explorations and form, context, and fabrication
+          </motion.p>
         </section>
 
         <section className="max-w-[1800px] mx-auto px-6 pb-32">

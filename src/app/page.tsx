@@ -42,6 +42,7 @@ interface AboutData {
   jobTitle: string;
   profileImage: string;
   aboutText: string;
+  about: string;
   skills: string[];
 }
 
@@ -179,7 +180,7 @@ export default function Home() {
                 className="group inline-flex items-center gap-3 sm:gap-4 text-xl sm:text-2xl font-medium tracking-tight"
               >
                 <span className="border-b border-neutral-900 group-hover:pr-6 transition-all duration-300">
-                  View Selected Works
+                  View Works
                 </span>
                 <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-2" />
               </Link>
@@ -188,6 +189,34 @@ export default function Home() {
 
           {/* Divider */}
           <div className="border-t border-neutral-200 my-16 sm:my-20 lg:my-24" />
+
+          {/* ABOUT */}
+          {aboutData.about && (
+            <motion.section
+              className="pb-16 sm:pb-20 lg:pb-24"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55 }}
+            >
+              <div
+                className="
+                  bg-white
+                  border border-neutral-200
+                  rounded-3xl
+                  px-7 py-9 sm:px-10 sm:py-12 lg:px-12 lg:py-14
+                  shadow-[0_20px_60px_rgba(0,0,0,0.04)]
+                "
+              >
+                <h2 className="text-xl sm:text-2xl font-semibold tracking-tight mb-6 sm:mb-8">
+                  About
+                </h2>
+                <p className="text-base sm:text-lg leading-relaxed text-neutral-700 whitespace-pre-line">
+                  {aboutData.about}
+                </p>
+              </div>
+            </motion.section>
+          )}
 
           {/* EDUCATION + EXPERIENCE */}
           <div

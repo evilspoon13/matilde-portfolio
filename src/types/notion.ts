@@ -4,6 +4,7 @@ export interface About {
   jobTitle: string;
   profileImage: string;
   aboutText: string;
+  about: string;
   skills: string[];
   resume: string;
   portfolio: string;

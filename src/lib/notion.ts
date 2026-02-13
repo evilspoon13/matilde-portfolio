@@ -24,6 +24,7 @@ export async function getAbout(): Promise<About | null> {
       profileImage: page.properties['Profile Image']?.files[0]?.file?.url ||
                     page.properties['Profile Image']?.files[0]?.external?.url || '',
       aboutText: page.properties['About Text']?.rich_text[0]?.plain_text || '',
+      about: page.properties['About']?.rich_text[0]?.plain_text || '',
       skills: page.properties.Skills?.multi_select?.map((s: any) => s.name) || [],
       resume: page.properties.Resume?.files[0]?.file?.url ||
               page.properties.Resume?.files[0]?.external?.url || '',
