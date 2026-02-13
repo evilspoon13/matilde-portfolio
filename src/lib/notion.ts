@@ -115,12 +115,6 @@ export async function getWorks(): Promise<Work[]> {
   try {
     const response = await notion.databases.query({
       database_id: process.env.NOTION_WORKS_DB_ID!,
-      sorts: [
-        {
-          property: 'Date',
-          direction: 'descending',
-        },
-      ],
     } as QueryDatabaseParameters);
 
     return response.results.map((page) => {
