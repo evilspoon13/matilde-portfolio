@@ -43,8 +43,9 @@ export interface Work {
   title: string;
   date: string;
   description: string;
-  image: string;
+  images: string[];
   details: string[];
   location: string;
   client: string;
+  pdf: string;
 }

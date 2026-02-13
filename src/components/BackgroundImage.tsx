@@ -23,16 +23,25 @@ export default function BackgroundImage() {
 
     if (!backgroundUrl) return null;
 
-    return (
-        <div className="fixed inset-0 z-0 pointer-events-none">
-            <Image
-                src={backgroundUrl}
-                alt=""
-                fill
-                className="object-cover opacity-25"
-                priority
-                unoptimized
-            />
-        </div>
-    );
+return (
+  <div className="fixed inset-0 -z-10 pointer-events-none">
+
+    {/* Image */}
+    <Image
+      src={backgroundUrl}
+      alt=""
+      fill
+      priority
+      sizes="100vw"
+      quality={100}
+      className="object-cover brightness-90 contrast-105 saturate-90 select-none"
+    />
+
+    {/* Soft overlay to control whiteness */}
+    <div className="absolute inset-0 bg-white/40" />
+
+  </div>
+);
+
+
 }

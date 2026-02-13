@@ -1,120 +1,122 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { RiLinkedinBoxFill, RiMailLine, RiFileTextLine, RiGithubFill, RiPhoneLine } from "react-icons/ri";
+import { useState, useEffect } from "react";
+import {
+  RiLinkedinBoxFill,
+  RiMailLine,
+  RiFileTextLine
+} from "react-icons/ri";
 
 interface ContactOption {
-    id: string;
-    name: string;
-    icon: React.ReactNode;
-    href: string;
-    hoverColor: string;
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  href: string;
 }
 
 export default function ContactTray() {
-    const [hoveredId, setHoveredId] = useState<string | null>(null);
-    const [resumeUrl, setResumeUrl] = useState<string>("");
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [resumeUrl, setResumeUrl] = useState<string>("");
 
-    useEffect(() => {
-        const fetchResume = async () => {
-            try {
-                const res = await fetch('/api/about');
-                const data = await res.json();
-                if (data?.resume) {
-                    setResumeUrl(data.resume);
-                }
-            } catch (error) {
-                console.error('Error fetching resume:', error);
-            }
-        };
-        fetchResume();
-    }, []);
-
-    const contactOptions: ContactOption[] = [
-        {
-            id: "resume",
-            name: "Resume",
-            icon: <RiFileTextLine className="w-full h-full" />,
-            href: resumeUrl || '#',
-            hoverColor: "hover:text-gray-600"
-        },
-        {
-            id: "email",
-            name: "Email",
-            icon: <RiMailLine className="w-full h-full" />,
-            href: "mailto:matilde.crisp@tamu.edu",
-            hoverColor: "hover:text-gray-600"
-        },
-        {
-            id: "linkedin",
-            name: "LinkedIn",
-            icon: <RiLinkedinBoxFill className="w-full h-full" />,
-            href: "https://www.linkedin.com/in/matilde-crisp-a34a25254/",
-            hoverColor: "hover:text-gray-700"
+  useEffect(() => {
+    const fetchResume = async () => {
+      try {
+        const res = await fetch("/api/about");
+        const data = await res.json();
+        if (data?.resume) {
+          setResumeUrl(data.resume);
         }
-    ];
+      } catch (error) {
+        console.error("Error fetching resume:", error);
+      }
+    };
+    fetchResume();
+  }, []);
 
-    return (
-        <div className="w-full flex justify-center px-4 md:px-6 lg:px-8 py-8">
-            <div className="bg-white/60 backdrop-blur-xl border border-gray-300/50 rounded-2xl px-8 py-4 shadow-2xl w-full max-w-7xl">
-                <div className="flex items-end justify-center gap-4">
-                    {contactOptions.map((option) => (
-                        <a
-                            key={option.id}
-                            href={option.href}
-                            target={["linkedin", "phone", "resume"].includes(option.id) ? "_blank" : undefined}
-                            rel={["linkedin", "phone", "resume"].includes(option.id) ? "noopener noreferrer" : undefined}
-                            onClick={() => {
-                                if (option.id === "email") {
-                                    window.location.href = option.href;
-                                }
-                            }}
-                            onMouseEnter={() => setHoveredId(option.id)}
-                            onMouseLeave={() => setHoveredId(null)}
-                            className={`
-                                group relative flex flex-col items-center justify-end
-                                transition-all duration-300 ease-out
-                                ${hoveredId === option.id
-                                    ? 'scale-125 -translate-y-2'
-                                    : hoveredId
-                                        ? 'scale-95'
-                                        : 'scale-100'
-                                }
-                            `}
-                        >
-                            {/* Icon Container */}
-                            <div className={`
-                                relative bg-gradient-to-br from-gray-100 to-gray-200
-                                rounded-2xl p-4 shadow-lg
-                                transition-all duration-300
-                                ${hoveredId === option.id ? 'shadow-2xl' : ''}
-                            `}>
-                                <div className={`
-                                    w-12 h-12 md:w-14 md:h-14 text-gray-700 transition-all duration-300
-                                    ${option.hoverColor}
-                                `}>
-                                    {option.icon}
-                                </div>
-                            </div>
+  const contactOptions: ContactOption[] = [
+    {
+      id: "resume",
+      name: "Resume",
+      icon: <RiFileTextLine className="w-full h-full" />,
+      href: resumeUrl || "#",
+    },
+    {
+      id: "email",
+      name: "Email",
+      icon: <RiMailLine className="w-full h-full" />,
+      href: "mailto:matilde.crisp@tamu.edu",
+    },
+    {
+      id: "linkedin",
+      name: "LinkedIn",
+      icon: <RiLinkedinBoxFill className="w-full h-full" />,
+      href: "https://www.linkedin.com/in/matilde-crisp-a34a25254/",
+    },
+  ];
 
-                            {/* Label - appears on hover */}
-                            <div className={`
-                                absolute -top-8 left-1/2 transform -translate-x-1/2
-                                bg-gray-900 text-white text-xs font-medium px-3 py-1 rounded-lg
-                                whitespace-nowrap transition-all duration-200
-                                ${hoveredId === option.id
-                                    ? 'opacity-100 translate-y-0'
-                                    : 'opacity-0 translate-y-2 pointer-events-none'
-                                }
-                            `}>
-                                {option.name}
-                                {/* Arrow */}
-                                <div className="absolute left-1/2 transform -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                            </div>
-                        </a>
-                    ))}
-                </div>
-            </div>
+  return (
+    <div className="w-full flex justify-center px-6 py-20">
+
+      {/* Elevated container */}
+      <div className="
+        w-full max-w-5xl
+        bg-white
+        border border-neutral-200
+        rounded-3xl
+        px-12 py-10
+        shadow-[0_20px_60px_rgba(0,0,0,0.05)]
+      ">
+
+        <div className="flex justify-center items-center gap-16">
+
+          {contactOptions.map((option) => (
+            <a
+              key={option.id}
+              href={option.href}
+              target={["linkedin", "resume"].includes(option.id) ? "_blank" : undefined}
+              rel={["linkedin", "resume"].includes(option.id) ? "noopener noreferrer" : undefined}
+              onMouseEnter={() => setHoveredId(option.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              className="group flex flex-col items-center gap-4 transition-all duration-300"
+            >
+
+              {/* Icon surface */}
+              <div
+                className={`
+                  w-14 h-14 flex items-center justify-center
+                  rounded-2xl
+                  border border-neutral-200
+                  bg-neutral-50
+                  text-neutral-600
+                  transition-all duration-300
+                  ${hoveredId === option.id
+                    ? "text-black bg-white shadow-md -translate-y-1"
+                    : ""
+                  }
+                `}
+              >
+                {option.icon}
+              </div>
+
+              {/* Label */}
+              <span
+                className={`
+                  text-xs tracking-[0.25em] uppercase
+                  transition-all duration-300
+                  ${hoveredId === option.id
+                    ? "text-black opacity-100"
+                    : "text-neutral-500 opacity-70"
+                  }
+                `}
+              >
+                {option.name}
+              </span>
+
+            </a>
+          ))}
+
         </div>
-    );
+      </div>
+    </div>
+  );
 }

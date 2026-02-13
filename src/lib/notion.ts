@@ -128,13 +128,14 @@ export async function getWorks(): Promise<Work[]> {
       return {
         id: page.id,
         title: props.Title?.title[0]?.plain_text || '',
-        date: props.Date?.date?.start || '', // Changed from rich_text to date
+        date: props.Date?.date?.start || '',
         description: props.Description?.rich_text[0]?.plain_text || '',
-        image: props.Image?.files[0]?.file?.url || 
-               props.Image?.files[0]?.external?.url || '',
+        images: props.Image?.files?.map((f: any) => f.file?.url || f.external?.url || '').filter(Boolean) || [],
         details: props.Details?.multi_select?.map((d: any) => d.name) || [],
         location: props.Location?.rich_text[0]?.plain_text || '',
         client: props.Client?.rich_text[0]?.plain_text || '',
+        pdf: props.PDF?.files[0]?.file?.url ||
+             props.PDF?.files[0]?.external?.url || '',
       };
     });
   } catch (error) {

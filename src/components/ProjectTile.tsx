@@ -8,13 +8,14 @@ interface ProjectTileProps {
     id: string;
     title: string;
     date: string;
-    image: string;
+    images: string[];
     link: string;
 }
 
-export default function ProjectTile({ id, title, date, image, link }: ProjectTileProps) {
+export default function ProjectTile({ id, title, date, images, link }: ProjectTileProps) {
     const [imageError, setImageError] = useState(false);
-    
+
+    const image = images?.[0] || '';
     // Normalize protocol-relative URLs to https
     const normalizedImage = image?.startsWith('//') ? `https:${image}` : image;
 
