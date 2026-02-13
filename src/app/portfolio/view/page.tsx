@@ -1,7 +1,12 @@
 "use client";
 
 import Transition from "@/components/Transition";
-import PortfolioBookViewer from "@/components/PortfolioBookViewer";
+import dynamic from "next/dynamic";
+
+const PortfolioBookViewer = dynamic(
+  () => import("@/components/PortfolioBookViewer"),
+  { ssr: false }
+);
 
 export default function PortfolioViewPage() {
   return (
