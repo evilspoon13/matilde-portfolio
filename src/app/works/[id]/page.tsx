@@ -111,7 +111,7 @@ export default function WorkDetail() {
             </motion.div>
 
             <motion.p
-              className="text-lg leading-relaxed text-neutral-700 max-w-3xl"
+              className="text-lg leading-relaxed text-neutral-700 max-w-3xl whitespace-pre-line"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
