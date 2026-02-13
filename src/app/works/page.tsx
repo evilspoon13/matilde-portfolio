@@ -70,7 +70,7 @@ export default function Works() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Spacial explorations and form, context, and fabrication
+            Spacial explorations in form, context, and fabrication
           </motion.p>
         </section>
 
