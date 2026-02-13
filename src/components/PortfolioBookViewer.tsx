@@ -311,7 +311,7 @@ export default function PortfolioBookViewer({ fileUrl }: Props) {
               <Document file={fileUrl}>
                 <Page
                   pageNumber={selectedPage}
-                  height={Math.floor(window.innerHeight * 0.85)}
+                  height={Math.floor((typeof window !== "undefined" ? window.innerHeight : 800) * 0.85)}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
                   className="rounded-xl overflow-hidden shadow-2xl"
