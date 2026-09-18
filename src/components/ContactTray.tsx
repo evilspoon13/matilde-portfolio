@@ -1,11 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   RiLinkedinBoxFill,
   RiMailLine,
   RiFileTextLine
 } from "react-icons/ri";
+
+type Props = {
+  resumeUrl?: string;
+};
 
 interface ContactOption {
   id: string;
@@ -14,24 +18,8 @@ interface ContactOption {
   href: string;
 }
 
-export default function ContactTray() {
+export default function ContactTray({ resumeUrl }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [resumeUrl, setResumeUrl] = useState<string>("");
-
-  useEffect(() => {
-    const fetchResume = async () => {
-      try {
-        const res = await fetch("/api/about");
-        const data = await res.json();
-        if (data?.resume) {
-          setResumeUrl(data.resume);
-        }
-      } catch (error) {
-        console.error("Error fetching resume:", error);
-      }
-    };
-    fetchResume();
-  }, []);
 
   const contactOptions: ContactOption[] = [
     {

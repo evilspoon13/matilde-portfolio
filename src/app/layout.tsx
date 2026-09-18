@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import BackgroundImage from "@/components/BackgroundImage";
+import { getAbout } from "@/lib/notion";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -15,23 +16,27 @@ export const metadata: Metadata = {
   description: "Portfolio",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetched once per render and shared with the footer/background, rather than
+  // each of them hitting /api/about from the browser after hydration.
+  const about = await getAbout();
+
   return (
     <html lang="en">
       <body
         className={`${syne.variable} font-sans antialiased`}
       >
-        <BackgroundImage />
+        <BackgroundImage src={about?.background} />
         <div className="relative z-10 flex flex-col min-h-screen bg-gradient-to-br from-gray-50/70 to-gray-100/70 overflow-x-hidden">
             <NavBar/>
             <main className="flex-grow">
               {children}
             </main>
-            <Footer/>
+            <Footer resumeUrl={about?.resume} />
         </div>
       </body>
     </html>

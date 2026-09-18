@@ -1,140 +1,242 @@
 import { Client } from '@notionhq/client';
 import { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
+import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 import { About, Education, Experience, Work } from '@/types/notion';
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
 
-// Fetch About data (should only be 1 row)
-export async function getAbout(): Promise<About | null> {
+/**
+ * Notion re-signs its S3 file URLs on every query (the path is stable, the
+ * X-Amz-* signature is not, and it expires in an hour). A URL that changes on
+ * every request can never be cached by next/image, so we hand the browser a
+ * stable /api/img/<path> URL instead and re-sign server-side. See imageIndex.
+ */
+export const NOTION_CACHE_TAG = 'notion';
+const REVALIDATE_SECONDS = 600;
+
+const richText = (prop: any): string =>
+  prop?.rich_text?.map((t: any) => t.plain_text).join('') || '';
+
+const title = (prop: any): string =>
+  prop?.title?.map((t: any) => t.plain_text).join('') || '';
+
+const fileUrl = (prop: any): string =>
+  prop?.files?.[0]?.file?.url || prop?.files?.[0]?.external?.url || '';
+
+const fileUrls = (prop: any): string[] =>
+  prop?.files?.map((f: any) => f.file?.url || f.external?.url || '').filter(Boolean) || [];
+
+/** Stable cache key for a Notion-hosted file: the S3 path, minus the signature. */
+export function notionFileKey(signedUrl: string): string | null {
+  if (!signedUrl) return null;
   try {
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_ABOUT_DB_ID!,
-    } as QueryDatabaseParameters);
+    const u = new URL(signedUrl);
+    if (!u.hostname.endsWith('.amazonaws.com')) return null;
+    return u.pathname.replace(/^\/+/, '');
+  } catch {
+    return null;
+  }
+}
 
-    if (response.results.length === 0) return null;
+/** Browser-facing URL for a Notion file: stable, so it can actually be cached. */
+export function proxiedFileUrl(signedUrl: string): string {
+  const key = notionFileKey(signedUrl);
+  if (!key) return signedUrl;
+  return `/api/img/${key.split('/').map(encodeURIComponent).join('/')}`;
+}
 
-    const page: any = response.results[0];
-    
+// ---------------------------------------------------------------------------
+// Raw fetchers — these return live signed URLs and are what the cache wraps.
+// ---------------------------------------------------------------------------
+
+async function fetchAbout(): Promise<About | null> {
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_ABOUT_DB_ID!,
+  } as QueryDatabaseParameters);
+
+  if (response.results.length === 0) return null;
+
+  const props = (response.results[0] as any).properties;
+
+  return {
+    id: response.results[0].id,
+    name: title(props.Name),
+    jobTitle: richText(props['Job Title']),
+    profileImage: fileUrl(props['Profile Image']),
+    aboutText: richText(props['About Text']),
+    about: richText(props['About']),
+    skills: props.Skills?.multi_select?.map((s: any) => s.name) || [],
+    resume: fileUrl(props.Resume),
+    portfolio: fileUrl(props.Portfolio),
+    background: fileUrl(props.Background),
+  };
+}
+
+async function fetchEducation(): Promise<Education[]> {
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_EDUCATION_DB_ID!,
+    sorts: [{ property: 'Start Date', direction: 'descending' }],
+  } as QueryDatabaseParameters);
+
+  return response.results.map((page) => {
+    const props = (page as any).properties;
     return {
       id: page.id,
-      name: page.properties.Name?.title[0]?.plain_text || '',
-      jobTitle: page.properties['Job Title']?.rich_text[0]?.plain_text || '',
-      profileImage: page.properties['Profile Image']?.files[0]?.file?.url ||
-                    page.properties['Profile Image']?.files[0]?.external?.url || '',
-      aboutText: page.properties['About Text']?.rich_text[0]?.plain_text || '',
-      about: page.properties['About']?.rich_text[0]?.plain_text || '',
-      skills: page.properties.Skills?.multi_select?.map((s: any) => s.name) || [],
-      resume: page.properties.Resume?.files[0]?.file?.url ||
-              page.properties.Resume?.files[0]?.external?.url || '',
-      portfolio: page.properties.Portfolio?.files[0]?.file?.url ||
-                 page.properties.Portfolio?.files[0]?.external?.url || '',
-      background: page.properties.Background?.files[0]?.file?.url ||
-                  page.properties.Background?.files[0]?.external?.url || '',
+      degree: richText(props.Degree),
+      school: title(props.School),
+      fieldOfStudy: richText(props['Field of Study']),
+      level: props.Level?.select?.name || '',
+      startDate: props['Start Date']?.date?.start || '',
+      endDate: props['End Date']?.date?.start || '',
+      current: props.Current?.checkbox || false,
+      location: richText(props.Location),
+      gpa: props.GPA?.number?.toString() || '',
+      description: richText(props.Description),
     };
-  } catch (error) {
-    console.error('Error in getAbout:', error);
-    throw error;
-  }
+  });
 }
 
-// Fetch all Education entries
-export async function getEducation(): Promise<Education[]> {
-  try {
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_EDUCATION_DB_ID!,
-      sorts: [
-        {
-          property: 'Start Date',
-          direction: 'descending',
-        },
-      ],
-    } as QueryDatabaseParameters);
+async function fetchExperience(): Promise<Experience[]> {
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_EXPERIENCE_DB_ID!,
+    sorts: [{ property: 'Start Date', direction: 'descending' }],
+  } as QueryDatabaseParameters);
 
-    return response.results.map((page) => {
-      const props = (page as any).properties;
-      
-      return {
-        id: page.id,
-        degree: props.Degree?.rich_text[0]?.plain_text || '',
-        school: props.School?.title[0]?.plain_text || '',
-        fieldOfStudy: props['Field of Study']?.rich_text[0]?.plain_text || '',
-        level: props.Level?.select?.name || '',
-        startDate: props['Start Date']?.date?.start || '',
-        endDate: props['End Date']?.date?.start || '',
-        current: props.Current?.checkbox || false,
-        location: props.Location?.rich_text[0]?.plain_text || '',
-        gpa: props.GPA?.number?.toString() || '',
-        description: props.Description?.rich_text[0]?.plain_text || '',
-      };
-    });
-  } catch (error) {
-    console.error('Error in getEducation:', error);
-    throw error;
-  }
+  return response.results.map((page) => {
+    const props = (page as any).properties;
+    return {
+      id: page.id,
+      role: richText(props.Role),
+      company: title(props.Company),
+      location: richText(props.Location),
+      employmentType: props['Employment Type']?.multi_select?.map((t: any) => t.name).join(', ') || '',
+      startDate: props['Start Date']?.date?.start || '',
+      endDate: props['End Date']?.date?.start || '',
+      current: props.Current?.checkbox || false,
+      skills: props.Skills?.multi_select?.map((s: any) => s.name) || [],
+      summary: richText(props.Summary),
+      highlights: richText(props.Highlights).split('\n').filter((h: string) => h.trim()),
+    };
+  });
 }
 
-// Fetch all Experience entries
-export async function getExperience(): Promise<Experience[]> {
-  try {
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_EXPERIENCE_DB_ID!,
-      sorts: [
-        {
-          property: 'Start Date',
-          direction: 'descending',
-        },
-      ],
-    } as QueryDatabaseParameters);
+async function fetchWorks(): Promise<Work[]> {
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_WORKS_DB_ID!,
+  } as QueryDatabaseParameters);
 
-    return response.results.map((page) => {
-      const props = (page as any).properties;
-      
-      return {
-        id: page.id,
-        role: props.Role?.rich_text[0]?.plain_text || '',
-        company: props.Company?.title[0]?.plain_text || '',
-        location: props.Location?.rich_text[0]?.plain_text || '',
-        employmentType: props['Employment Type']?.multi_select?.map((t: any) => t.name).join(', ') || '',
-        startDate: props['Start Date']?.date?.start || '',
-        endDate: props['End Date']?.date?.start || '',
-        current: props.Current?.checkbox || false,
-        skills: props.Skills?.multi_select?.map((s: any) => s.name) || [],
-        summary: props.Summary?.rich_text[0]?.plain_text || '',
-        highlights: props.Highlights?.rich_text[0]?.plain_text?.split('\n').filter((h: string) => h.trim()) || [],
-      };
-    });
-  } catch (error) {
-    console.error('Error in getExperience:', error);
-    throw error;
-  }
+  return response.results.map((page) => {
+    const props = (page as any).properties;
+    return {
+      id: page.id,
+      title: title(props.Title),
+      date: props.Date?.date?.start || '',
+      description: richText(props.Description),
+      images: fileUrls(props.Image),
+      details: props.Details?.multi_select?.map((d: any) => d.name) || [],
+      location: richText(props.Location),
+      client: richText(props.Client),
+      pdf: fileUrl(props.PDF),
+    };
+  });
 }
-// Fetch all Works/Projects
-export async function getWorks(): Promise<Work[]> {
-  try {
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_WORKS_DB_ID!,
-    } as QueryDatabaseParameters);
 
-    return response.results.map((page) => {
-      const props = (page as any).properties;
-      
-      return {
-        id: page.id,
-        title: props.Title?.title[0]?.plain_text || '',
-        date: props.Date?.date?.start || '',
-        description: props.Description?.rich_text[0]?.plain_text || '',
-        images: props.Image?.files?.map((f: any) => f.file?.url || f.external?.url || '').filter(Boolean) || [],
-        details: props.Details?.multi_select?.map((d: any) => d.name) || [],
-        location: props.Location?.rich_text[0]?.plain_text || '',
-        client: props.Client?.rich_text[0]?.plain_text || '',
-        pdf: props.PDF?.files[0]?.file?.url ||
-             props.PDF?.files[0]?.external?.url || '',
-      };
-    });
-  } catch (error) {
-    console.error('Error in getWorks:', error);
-    throw error;
+// ---------------------------------------------------------------------------
+// Cached layer. unstable_cache persists across requests (Vercel Data Cache);
+// react cache() dedupes repeat calls inside a single render.
+// ---------------------------------------------------------------------------
+
+const cachedAbout = unstable_cache(fetchAbout, ['notion:about'], {
+  revalidate: REVALIDATE_SECONDS,
+  tags: [NOTION_CACHE_TAG],
+});
+
+const cachedEducation = unstable_cache(fetchEducation, ['notion:education'], {
+  revalidate: REVALIDATE_SECONDS,
+  tags: [NOTION_CACHE_TAG],
+});
+
+const cachedExperience = unstable_cache(fetchExperience, ['notion:experience'], {
+  revalidate: REVALIDATE_SECONDS,
+  tags: [NOTION_CACHE_TAG],
+});
+
+const cachedWorks = unstable_cache(fetchWorks, ['notion:works'], {
+  revalidate: REVALIDATE_SECONDS,
+  tags: [NOTION_CACHE_TAG],
+});
+
+// ---------------------------------------------------------------------------
+// Public API — image/file URLs are rewritten to the stable proxy.
+// ---------------------------------------------------------------------------
+
+export const getAbout = cache(async (): Promise<About | null> => {
+  const about = await cachedAbout();
+  if (!about) return null;
+  return {
+    ...about,
+    profileImage: proxiedFileUrl(about.profileImage),
+    background: proxiedFileUrl(about.background),
+    resume: proxiedFileUrl(about.resume),
+    portfolio: proxiedFileUrl(about.portfolio),
+  };
+});
+
+export const getEducation = cache(async (): Promise<Education[]> => cachedEducation());
+
+export const getExperience = cache(async (): Promise<Experience[]> => cachedExperience());
+
+export const getWorks = cache(async (): Promise<Work[]> => {
+  const works = await cachedWorks();
+  return works.map((w) => ({
+    ...w,
+    images: w.images.map(proxiedFileUrl),
+    pdf: proxiedFileUrl(w.pdf),
+  }));
+});
+
+export const getWorkById = cache(async (id: string): Promise<Work | null> => {
+  const works = await getWorks();
+  return works.find((w) => w.id === id) ?? null;
+});
+
+/**
+ * Stable-key -> live-signed-URL map for every Notion file we serve. Used only
+ * by /api/img to re-sign a request. `fresh` bypasses the cache, for when a
+ * cached signature has already expired.
+ */
+async function buildImageIndex(): Promise<Record<string, string>> {
+  const [about, works] = await Promise.all([fetchAbout(), fetchWorks()]);
+
+  const index: Record<string, string> = {};
+  const add = (url: string) => {
+    const key = notionFileKey(url);
+    if (key) index[key] = url;
+  };
+
+  if (about) {
+    add(about.profileImage);
+    add(about.background);
+    add(about.resume);
+    add(about.portfolio);
   }
+  for (const work of works) {
+    work.images.forEach(add);
+    add(work.pdf);
+  }
+
+  return index;
+}
+
+const cachedImageIndex = unstable_cache(buildImageIndex, ['notion:image-index'], {
+  revalidate: REVALIDATE_SECONDS,
+  tags: [NOTION_CACHE_TAG],
+});
+
+export async function getSignedFileUrl(key: string, fresh = false): Promise<string | null> {
+  const index = fresh ? await buildImageIndex() : await cachedImageIndex();
+  return index[key] ?? null;
 }

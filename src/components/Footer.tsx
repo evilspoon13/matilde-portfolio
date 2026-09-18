@@ -1,28 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { RiLinkedinBoxFill, RiMailLine, RiFileTextLine } from "react-icons/ri";
 
-export default function Footer() {
-  const [resumeUrl, setResumeUrl] = useState<string>("");
+type Props = {
+  resumeUrl?: string;
+};
 
-  useEffect(() => {
-    const fetchResume = async () => {
-      try {
-        const res = await fetch("/api/about");
-        const data = await res.json();
-        if (data?.resume) {
-          setResumeUrl(data.resume);
-        }
-      } catch (error) {
-        console.error("Error fetching resume:", error);
-      }
-    };
-
-    fetchResume();
-  }, []);
-
+export default function Footer({ resumeUrl }: Props) {
   return (
     <footer className="w-full py-28">
       <div className="max-w-7xl mx-auto px-6">

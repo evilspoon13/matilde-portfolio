@@ -1,5 +1,7 @@
-import { getWorks } from '@/lib/notion';
+import { getWorkById } from '@/lib/notion';
 import { NextResponse } from 'next/server';
+
+export const revalidate = 600;
 
 export async function GET(
   request: Request,
@@ -7,8 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const works = await getWorks();
-    const work = works.find(w => w.id === id);
+    const work = await getWorkById(id);
     
     if (!work) {
       return NextResponse.json({ error: 'Work not found' }, { status: 404 });
