@@ -5,80 +5,84 @@ type Props = {
   resumeUrl?: string;
 };
 
+const LINKS = [
+  { href: "/works", label: "Works" },
+  { href: "/portfolio", label: "Portfolio" },
+];
+
 export default function Footer({ resumeUrl }: Props) {
   return (
-    <footer className="w-full py-28">
-      <div className="max-w-7xl mx-auto px-6">
+    <footer className="w-full border-t border-neutral-200/80 bg-white/60">
+      <div className="mx-auto max-w-[1600px] px-6 py-16">
+        <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm space-y-3">
+            <Link
+              href="/"
+              className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-900 transition-opacity hover:opacity-60"
+            >
+              Matilde Crisp
+            </Link>
+            <p className="text-sm leading-relaxed text-neutral-500">
+              Architecture honors student at Texas A&amp;M University, working on
+              sustainable, context-responsive design.
+            </p>
+          </div>
 
-        {/* Elevated surface */}
-        <div
-          className="
-            bg-white
-            border border-neutral-200
-            rounded-3xl
-            px-12 py-20
-            shadow-[0_20px_60px_rgba(0,0,0,0.05)]
-          "
-        >
-
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-14">
-
-            {/* Left */}
-            <div className="space-y-5">
-              <Link
-                href="/"
-                className="text-2xl font-semibold tracking-tight hover:opacity-70 transition-opacity"
-              >
-                Matilde Crisp
-              </Link>
-
+          <div className="flex flex-col gap-10 sm:flex-row sm:gap-20">
+            <div className="space-y-4">
+              <p className="text-xs uppercase tracking-[0.25em] text-neutral-400">
+                Pages
+              </p>
+              <div className="flex flex-col gap-3">
+                {LINKS.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            {/* Right */}
-            <div className="flex flex-col sm:flex-row gap-12">
-
-              <a
-                href={resumeUrl || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 text-neutral-600 hover:text-black transition-all duration-300"
-              >
-                <RiFileTextLine className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
-                <span className="text-sm uppercase tracking-[0.25em]">
-                  Resume
-                </span>
-              </a>
-
-              <a
-                href="mailto:matilde.crisp@tamu.edu"
-                className="group flex items-center gap-3 text-neutral-600 hover:text-black transition-all duration-300"
-              >
-                <RiMailLine className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
-                <span className="text-sm uppercase tracking-[0.25em]">
+            <div className="space-y-4">
+              <p className="text-xs uppercase tracking-[0.25em] text-neutral-400">
+                Elsewhere
+              </p>
+              <div className="flex flex-col gap-3">
+                <a
+                  href="mailto:matilde.crisp@tamu.edu"
+                  className="group flex items-center gap-3 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+                >
+                  <RiMailLine className="h-4 w-4 text-neutral-400 transition-colors group-hover:text-brand" />
                   Email
-                </span>
-              </a>
-
-              <a
-                href="https://www.linkedin.com/in/matilde-crisp-a34a25254/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 text-neutral-600 hover:text-black transition-all duration-300"
-              >
-                <RiLinkedinBoxFill className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
-                <span className="text-sm uppercase tracking-[0.25em]">
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/matilde-crisp-a34a25254/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+                >
+                  <RiLinkedinBoxFill className="h-4 w-4 text-neutral-400 transition-colors group-hover:text-brand" />
                   LinkedIn
-                </span>
-              </a>
-
+                </a>
+                <a
+                  href={resumeUrl || "/portfolio"}
+                  target={resumeUrl ? "_blank" : undefined}
+                  rel={resumeUrl ? "noopener noreferrer" : undefined}
+                  className="group flex items-center gap-3 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+                >
+                  <RiFileTextLine className="h-4 w-4 text-neutral-400 transition-colors group-hover:text-brand" />
+                  Resume
+                </a>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Divider */}
-          <div className="mt-16 border-t border-neutral-200 pt-8 text-xs text-neutral-500 tracking-wide">
-            © {new Date().getFullYear()} Matilde Crisp
-          </div>
-
+        <div className="mt-14 border-t border-neutral-200/80 pt-6 text-xs tracking-wide text-neutral-400">
+          © {new Date().getFullYear()} Matilde Crisp
         </div>
       </div>
     </footer>

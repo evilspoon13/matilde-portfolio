@@ -2,53 +2,69 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/works", label: "Works" },
+  { href: "/portfolio", label: "Portfolio" },
+];
 
 export default function NavBar() {
   const pathname = usePathname();
+  // The bar is transparent over the hero and gains a surface once you scroll,
+  // so the name underneath it stays the first thing you see.
+  const [scrolled, setScrolled] = useState(false);
 
-  const isActive = (path: string) => {
-    if (path === "/") return pathname === "/";
-    return pathname.startsWith(path);
-  };
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const isActive = (path: string) =>
+    path === "/" ? pathname === "/" : pathname.startsWith(path);
 
   return (
-    <div className="w-full flex justify-center py-10 px-6">
+    <header
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        scrolled
+          ? "border-b border-neutral-200/80 bg-white/80 backdrop-blur-md"
+          : "border-b border-transparent"
+      }`}
+    >
+      <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center justify-between px-6">
+        <Link
+          href="/"
+          className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-900 transition-opacity hover:opacity-60"
+        >
+          Matilde Crisp
+        </Link>
 
-      {/* Elevated surface */}
-      <div className="
-        bg-white
-        border border-neutral-200
-        rounded-3xl
-        px-10 py-6
-        w-full max-w-5xl
-        shadow-[0_10px_40px_rgba(0,0,0,0.06)]
-      ">
-
-        <nav className="flex items-center justify-center gap-10">
-
-          {[
-            { href: "/", label: "Home" },
-            { href: "/works", label: "Works" },
-            { href: "/portfolio", label: "Portfolio" },
-          ].map(({ href, label }) => (
+        <nav className="flex items-center gap-8 sm:gap-10">
+          {LINKS.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className="relative text-sm uppercase tracking-[0.25em] text-neutral-600 hover:text-black transition-colors group"
+              className={`hidden text-sm transition-colors sm:block ${
+                isActive(href)
+                  ? "text-neutral-900"
+                  : "text-neutral-500 hover:text-neutral-900"
+              }`}
             >
               {label}
-              <span
-                className={`
-                  absolute left-0 -bottom-2 h-px bg-black transition-all duration-300
-                  ${isActive(href) ? "w-full" : "w-0 group-hover:w-full"}
-                `}
-              />
             </Link>
           ))}
 
+          <a
+            href="mailto:matilde.crisp@tamu.edu"
+            className="rounded-full bg-brand px-5 py-2 text-sm text-white transition-colors duration-300 hover:bg-brand-ink"
+          >
+            Get in touch
+          </a>
         </nav>
       </div>
-
-    </div>
+    </header>
   );
 }

@@ -30,28 +30,28 @@ export default function WorksGrid({ works }: Props) {
       <div className="w-full text-neutral-900">
 
         {/* Header */}
-        <section className="max-w-7xl mx-auto px-6 pt-20 pb-20 space-y-6">
-          <motion.h1
-            className="text-4xl md:text-6xl font-semibold tracking-tight"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            Works
-          </motion.h1>
+        <section className="mx-auto max-w-[1600px] px-6 pt-20 pb-14 sm:pt-24">
           <motion.p
-            className="text-sm uppercase tracking-[0.25em] text-neutral-500"
+            className="text-xs uppercase tracking-[0.25em] text-brand"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
+            transition={{ duration: 0.5 }}
           >
-            Spatial explorations in form, context, and fabrication
+            Selected work
           </motion.p>
+          <motion.h1
+            className="mt-4 max-w-3xl text-4xl font-medium tracking-[-0.03em] md:text-6xl"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            Spatial explorations in form, context, and fabrication.
+          </motion.h1>
         </section>
 
-        <section className="max-w-[1800px] mx-auto px-6 pb-32">
+        <section className="mx-auto max-w-[1600px] border-t border-neutral-200/80 px-6 pt-14 pb-32">
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
@@ -68,8 +68,8 @@ export default function WorksGrid({ works }: Props) {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.05 }}
                 >
-                  <Link href={`/works/${work.id}`}>
-                    <div className="relative w-full aspect-[4/5] overflow-hidden rounded-xl">
+                  <Link href={`/works/${work.id}`} className="block">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-neutral-200/80 bg-white">
                       {firstImage ? (
                         <Image
                           src={firstImage}
@@ -89,20 +89,25 @@ export default function WorksGrid({ works }: Props) {
                         <div className="w-full h-full bg-neutral-200" />
                       )}
 
-                      {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition duration-500 flex items-end p-6">
-                        <div className="opacity-0 group-hover:opacity-100 transition duration-500 text-white">
-                          <h2 className="text-lg font-medium">
-                            {work.title}
-                          </h2>
-
-                          <p className="text-xs uppercase tracking-[0.2em] mt-2 text-neutral-200">
-                            {work.date}
-                            {work.location && ` • ${work.location}`}
-                          </p>
-                        </div>
-                      </div>
+                      {/* Ring on hover, rather than a dark scrim — the caption
+                          below the tile already carries the title. */}
+                      <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent transition duration-500 group-hover:ring-brand/60" />
                     </div>
+
+                    <div className="mt-4 flex items-baseline justify-between gap-4">
+                      <h2 className="text-base font-medium transition-colors group-hover:text-brand-ink">
+                        {work.title}
+                      </h2>
+                      <p className="shrink-0 text-xs uppercase tracking-[0.2em] text-neutral-400">
+                        {work.date}
+                      </p>
+                    </div>
+
+                    {work.location && (
+                      <p className="mt-1 text-sm text-neutral-500">
+                        {work.location}
+                      </p>
+                    )}
                   </Link>
                 </motion.div>
               );

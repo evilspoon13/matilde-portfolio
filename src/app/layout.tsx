@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Syne } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import BackgroundImage from "@/components/BackgroundImage";
 import { getAbout } from "@/lib/notion";
 
-const syne = Syne({
-  variable: "--font-syne",
+const grotesk = Space_Grotesk({
+  variable: "--font-grotesk",
   subsets: ["latin"],
 });
 
@@ -28,10 +28,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${syne.variable} font-sans antialiased`}
+        className={`${grotesk.variable} font-sans antialiased`}
       >
         <BackgroundImage src={about?.background} />
-        <div className="relative z-10 flex flex-col min-h-screen bg-gradient-to-br from-gray-50/70 to-gray-100/70 overflow-x-hidden">
+        <div className="relative z-10 flex flex-col min-h-screen bg-[#f7f8fa]/90 overflow-x-hidden">
             <NavBar/>
             <main className="flex-grow">
               {children}

@@ -16,11 +16,11 @@ export default function BackgroundImage({ src }: Props) {
         fill
         priority
         sizes="100vw"
-        className="object-cover brightness-90 contrast-105 saturate-90 select-none"
+        className="object-cover brightness-105 contrast-95 saturate-50 select-none"
       />
 
       {/* Soft overlay to control whiteness */}
-      <div className="absolute inset-0 bg-white/40" />
+      <div className="absolute inset-0 bg-white/80" />
     </div>
   );
 }

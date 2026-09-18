@@ -1,109 +1,64 @@
 "use client";
 
-import { useState } from "react";
-import {
-  RiLinkedinBoxFill,
-  RiMailLine,
-  RiFileTextLine
-} from "react-icons/ri";
+import { RiLinkedinBoxFill, RiMailLine, RiFileTextLine } from "react-icons/ri";
 
 type Props = {
   resumeUrl?: string;
 };
 
-interface ContactOption {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  href: string;
-}
-
 export default function ContactTray({ resumeUrl }: Props) {
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  const contactOptions: ContactOption[] = [
-    {
-      id: "resume",
-      name: "Resume",
-      icon: <RiFileTextLine className="w-full h-full" />,
-      href: resumeUrl || "#",
-    },
+  const links = [
     {
       id: "email",
-      name: "Email",
-      icon: <RiMailLine className="w-full h-full" />,
+      label: "Email",
       href: "mailto:matilde.crisp@tamu.edu",
+      icon: <RiMailLine className="h-4 w-4" />,
+      external: false,
     },
     {
       id: "linkedin",
-      name: "LinkedIn",
-      icon: <RiLinkedinBoxFill className="w-full h-full" />,
+      label: "LinkedIn",
       href: "https://www.linkedin.com/in/matilde-crisp-a34a25254/",
+      icon: <RiLinkedinBoxFill className="h-4 w-4" />,
+      external: true,
+    },
+    {
+      id: "resume",
+      label: "Resume",
+      href: resumeUrl || "#",
+      icon: <RiFileTextLine className="h-4 w-4" />,
+      external: true,
     },
   ];
 
   return (
-    <div className="w-full flex justify-center px-6 py-20">
+    <div className="flex flex-col gap-10 rounded-3xl bg-brand-soft px-8 py-12 sm:px-12 sm:py-14 lg:flex-row lg:items-center lg:justify-between">
+      <div className="space-y-3">
+        <p className="text-xs uppercase tracking-[0.25em] text-brand-ink">
+          Contact
+        </p>
+        <h2 className="max-w-xl text-2xl font-medium leading-tight tracking-tight sm:text-4xl">
+          Open to studio work, internships, and collaborations.
+        </h2>
+      </div>
 
-      {/* Elevated container */}
-      <div className="
-        w-full max-w-5xl
-        bg-white
-        border border-neutral-200
-        rounded-3xl
-        px-12 py-10
-        shadow-[0_20px_60px_rgba(0,0,0,0.05)]
-      ">
-
-        <div className="flex justify-center items-center gap-16">
-
-          {contactOptions.map((option) => (
-            <a
-              key={option.id}
-              href={option.href}
-              target={["linkedin", "resume"].includes(option.id) ? "_blank" : undefined}
-              rel={["linkedin", "resume"].includes(option.id) ? "noopener noreferrer" : undefined}
-              onMouseEnter={() => setHoveredId(option.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              className="group flex flex-col items-center gap-4 transition-all duration-300"
-            >
-
-              {/* Icon surface */}
-              <div
-                className={`
-                  w-14 h-14 flex items-center justify-center
-                  rounded-2xl
-                  border border-neutral-200
-                  bg-neutral-50
-                  text-neutral-600
-                  transition-all duration-300
-                  ${hoveredId === option.id
-                    ? "text-black bg-white shadow-md -translate-y-1"
-                    : ""
-                  }
-                `}
-              >
-                {option.icon}
-              </div>
-
-              {/* Label */}
-              <span
-                className={`
-                  text-xs tracking-[0.25em] uppercase
-                  transition-all duration-300
-                  ${hoveredId === option.id
-                    ? "text-black opacity-100"
-                    : "text-neutral-500 opacity-70"
-                  }
-                `}
-              >
-                {option.name}
-              </span>
-
-            </a>
-          ))}
-
-        </div>
+      <div className="flex flex-wrap items-center gap-3">
+        {links.map((link) => (
+          <a
+            key={link.id}
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
+            className={`inline-flex items-center gap-2.5 rounded-full px-6 py-3 text-sm transition-colors duration-300 ${
+              link.id === "email"
+                ? "bg-brand text-white hover:bg-brand-ink"
+                : "border border-brand/30 bg-white/70 text-neutral-700 hover:border-brand hover:text-neutral-900"
+            }`}
+          >
+            {link.icon}
+            {link.label}
+          </a>
+        ))}
       </div>
     </div>
   );

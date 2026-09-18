@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import ContactTray from "@/components/ContactTray";
+import HeroScatter from "@/components/HeroScatter";
 import Transition from "@/components/Transition";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -27,230 +27,181 @@ const formatDateRange = (
   return `${start} - ${end}`;
 };
 
+/** Small caps label that opens every section below the hero. */
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs uppercase tracking-[0.25em] text-brand">{children}</p>
+  );
+}
+
 export default function HomeContent({ about, education, experience }: Props) {
+  // Notion's short "aboutText" is often empty; the opening of the longer bio
+  // reads well as the headline statement, so fall back to it.
+  const statement =
+    about.aboutText?.trim() ||
+    about.about?.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ") ||
+    "";
+
   return (
     <Transition>
       <div className="w-full text-neutral-900">
-        <div className="max-w-7xl mx-auto px-6">
+        {/* HERO — full-bleed so the scatter can run to the edges */}
+        <HeroScatter name={about.name} jobTitle={about.jobTitle} />
 
-          {/* HERO */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-20 lg:pb-32">
-
-            {about.profileImage && (
-              <motion.div
-                className="
-                  relative aspect-square w-full max-w-sm sm:max-w-md mx-auto lg:mx-0
-                  overflow-hidden rounded-3xl
-                  border border-neutral-200
-                  shadow-[0_20px_60px_rgba(0,0,0,0.05)]
-                "
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7 }}
-              >
-                <Image
-                  src={about.profileImage}
-                  alt={about.name}
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 50vw, (min-width: 640px) 448px, 384px"
-                  className="object-cover"
-                />
-              </motion.div>
+        <div className="mx-auto max-w-[1600px] px-6">
+          {/* INTRO STATEMENT */}
+          <motion.section
+            className="border-t border-neutral-200/80 py-16 sm:py-20 lg:py-24"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.45 }}
+          >
+            {statement && (
+              <p className="max-w-4xl text-2xl leading-[1.2] tracking-[-0.02em] sm:text-3xl lg:text-5xl">
+                {statement}
+              </p>
             )}
 
-            <motion.div
-              className="space-y-8 sm:space-y-10"
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.08 }}
-            >
-              <div className="space-y-4 sm:space-y-5">
-                <h1 className="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-tight">
-                  {about.name}
-                </h1>
-
-                <p className="text-lg sm:text-xl text-neutral-500">
-                  {about.jobTitle}
-                </p>
+            {about.skills?.length > 0 && (
+              <div className="mt-10 flex flex-wrap gap-2">
+                {about.skills.map((skill, index) => (
+                  <span
+                    key={index}
+                    className="rounded-full border border-neutral-200 bg-white/70 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-neutral-600"
+                  >
+                    {skill}
+                  </span>
+                ))}
               </div>
+            )}
 
-              {about.aboutText && (
-                <p className="text-base sm:text-lg leading-relaxed text-neutral-700 max-w-xl">
-                  {about.aboutText}
-                </p>
-              )}
-
-              {about.skills?.length > 0 && (
-                <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs sm:text-sm uppercase tracking-[0.15em] text-neutral-500">
-                  {about.skills.map((skill, index) => (
-                    <span key={index}>{skill}</span>
-                  ))}
-                </div>
-              )}
-
-              {/* CTA */}
-              <Link
-                href="/works"
-                className="group inline-flex items-center gap-3 sm:gap-4 text-xl sm:text-2xl font-medium tracking-tight"
-              >
-                <span className="border-b border-neutral-900 group-hover:pr-6 transition-all duration-300">
-                  View Works
-                </span>
-                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-2" />
-              </Link>
-            </motion.div>
-          </section>
-
-          {/* Divider */}
-          <div className="border-t border-neutral-200 my-16 sm:my-20 lg:my-24" />
+            <Link
+              href="/works"
+              className="group mt-12 inline-flex items-center gap-3 rounded-full bg-neutral-900 px-7 py-3.5 text-base text-white transition-colors duration-300 hover:bg-brand-ink"
+            >
+              View works
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </motion.section>
 
           {/* ABOUT */}
           {about.about && (
             <motion.section
-              className="pb-16 sm:pb-20 lg:pb-24"
+              className="grid grid-cols-1 gap-8 border-t border-neutral-200/80 py-16 sm:py-20 lg:grid-cols-[18rem_1fr] lg:gap-16 lg:py-24"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55 }}
             >
-              <div
-                className="
-                  bg-white
-                  border border-neutral-200
-                  rounded-3xl
-                  px-7 py-9 sm:px-10 sm:py-12 lg:px-12 lg:py-14
-                  shadow-[0_20px_60px_rgba(0,0,0,0.04)]
-                "
-              >
-                <h2 className="text-xl sm:text-2xl font-semibold tracking-tight mb-6 sm:mb-8">
-                  About
+              <div className="space-y-3">
+                <SectionLabel>About</SectionLabel>
+                <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">
+                  Background
                 </h2>
-                <p className="text-base sm:text-lg leading-relaxed text-neutral-700 whitespace-pre-line">
-                  {about.about}
-                </p>
+              </div>
+
+              <p className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-neutral-600 sm:text-lg">
+                {about.about}
+              </p>
+            </motion.section>
+          )}
+
+          {/* EDUCATION */}
+          {education.length > 0 && (
+            <motion.section
+              className="grid grid-cols-1 gap-8 border-t border-neutral-200/80 py-16 sm:py-20 lg:grid-cols-[18rem_1fr] lg:gap-16 lg:py-24"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55 }}
+            >
+              <div className="space-y-3">
+                <SectionLabel>Education</SectionLabel>
+                <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">
+                  Studies
+                </h2>
+              </div>
+
+              <div className="divide-y divide-neutral-200/80">
+                {education.map((edu, index) => (
+                  <motion.div
+                    key={edu.id}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.45, delay: index * 0.04 }}
+                    className="grid grid-cols-1 gap-2 py-7 first:pt-0 sm:grid-cols-[1fr_12rem]"
+                  >
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-medium">
+                        {edu.degree}
+                        {edu.fieldOfStudy && ` in ${edu.fieldOfStudy}`}
+                      </h3>
+                      <p className="text-sm text-neutral-500">{edu.school}</p>
+                      {edu.description && (
+                        <p className="max-w-2xl pt-1 text-sm leading-relaxed text-neutral-600">
+                          {edu.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 sm:text-right">
+                      {formatDateRange(edu.startDate, edu.endDate, edu.current)}
+                    </p>
+                  </motion.div>
+                ))}
               </div>
             </motion.section>
           )}
 
-          {/* EDUCATION + EXPERIENCE */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-20 pb-24 sm:pb-32 lg:pb-44">
+          {/* EXPERIENCE */}
+          {experience.length > 0 && (
+            <motion.section
+              className="grid grid-cols-1 gap-8 border-t border-neutral-200/80 py-16 sm:py-20 lg:grid-cols-[18rem_1fr] lg:gap-16 lg:py-24"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55 }}
+            >
+              <div className="space-y-3">
+                <SectionLabel>Experience</SectionLabel>
+                <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">
+                  Practice
+                </h2>
+              </div>
 
-            {/* EDUCATION */}
-            {education.length > 0 && (
-              <motion.section
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55 }}
-              >
-                <div
-                  className="
-                    bg-white
-                    border border-neutral-200
-                    rounded-3xl
-                    px-7 py-9 sm:px-10 sm:py-12 lg:px-12 lg:py-14
-                    shadow-[0_20px_60px_rgba(0,0,0,0.04)]
-                  "
-                >
-                  <h2 className="text-xl sm:text-2xl font-semibold tracking-tight mb-10 sm:mb-12 lg:mb-14">
-                    Education
-                  </h2>
-
-                  <div className="space-y-10 sm:space-y-12 lg:space-y-14">
-                    {education.map((edu, index) => (
-                      <motion.div
-                        key={edu.id}
-                        initial={{ opacity: 0, y: 18 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.45, delay: index * 0.04 }}
-                        className="space-y-3 sm:space-y-4"
-                      >
-                        <h3 className="text-base sm:text-lg font-medium">
-                          {edu.degree}
-                          {edu.fieldOfStudy && ` in ${edu.fieldOfStudy}`}
-                        </h3>
-
-                        <p className="text-neutral-500 text-sm sm:text-base">
-                          {edu.school}
+              <div className="divide-y divide-neutral-200/80">
+                {experience.map((exp, index) => (
+                  <motion.div
+                    key={exp.id}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.45, delay: index * 0.04 }}
+                    className="grid grid-cols-1 gap-2 py-7 first:pt-0 sm:grid-cols-[1fr_12rem]"
+                  >
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-medium">{exp.role}</h3>
+                      <p className="text-sm text-neutral-500">{exp.company}</p>
+                      {exp.summary && (
+                        <p className="max-w-2xl pt-1 text-sm leading-relaxed text-neutral-600">
+                          {exp.summary}
                         </p>
+                      )}
+                    </div>
 
-                        <p className="text-xs sm:text-sm uppercase tracking-[0.2em] text-neutral-400">
-                          {formatDateRange(edu.startDate, edu.endDate, edu.current)}
-                        </p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 sm:text-right">
+                      {formatDateRange(exp.startDate, exp.endDate, exp.current)}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
-                        {edu.description && (
-                          <p className="text-neutral-700 text-sm leading-relaxed pt-2 max-w-xl">
-                            {edu.description}
-                          </p>
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </motion.section>
-            )}
-
-            {/* EXPERIENCE */}
-            {experience.length > 0 && (
-              <motion.section
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55, delay: 0.06 }}
-              >
-                <div
-                  className="
-                    bg-white
-                    border border-neutral-200
-                    rounded-3xl
-                    px-7 py-9 sm:px-10 sm:py-12 lg:px-12 lg:py-14
-                    shadow-[0_20px_60px_rgba(0,0,0,0.04)]
-                  "
-                >
-                  <h2 className="text-xl sm:text-2xl font-semibold tracking-tight mb-10 sm:mb-12 lg:mb-14">
-                    Experience
-                  </h2>
-
-                  <div className="space-y-10 sm:space-y-12 lg:space-y-14">
-                    {experience.map((exp, index) => (
-                      <motion.div
-                        key={exp.id}
-                        initial={{ opacity: 0, y: 18 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.45, delay: index * 0.04 }}
-                        className="space-y-3 sm:space-y-4"
-                      >
-                        <h3 className="text-base sm:text-lg font-medium">
-                          {exp.role}
-                        </h3>
-
-                        <p className="text-neutral-500 text-sm sm:text-base">
-                          {exp.company}
-                        </p>
-
-                        <p className="text-xs sm:text-sm uppercase tracking-[0.2em] text-neutral-400">
-                          {formatDateRange(exp.startDate, exp.endDate, exp.current)}
-                        </p>
-
-                        {exp.summary && (
-                          <p className="text-neutral-700 text-sm leading-relaxed pt-2 max-w-xl">
-                            {exp.summary}
-                          </p>
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </motion.section>
-            )}
-          </div>
-
-          {/* CONTACT (hide on small screens like Portfolio) */}
+          {/* CONTACT */}
           <motion.div
-            className="hidden md:block pb-32 lg:pb-36"
+            className="border-t border-neutral-200/80 py-16 sm:py-20 lg:py-24"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -258,10 +209,6 @@ export default function HomeContent({ about, education, experience }: Props) {
           >
             <ContactTray resumeUrl={about.resume} />
           </motion.div>
-
-          {/* Mobile spacer so footer doesn't feel glued */}
-          <div className="md:hidden h-10" />
-
         </div>
       </div>
     </Transition>

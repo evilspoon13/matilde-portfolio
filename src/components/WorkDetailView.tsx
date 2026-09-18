@@ -22,32 +22,24 @@ export default function WorkDetailView({ work }: Props) {
       <div className="w-full text-neutral-900">
 
         {/* Back */}
-        <div className="max-w-7xl mx-auto px-6 pt-20">
+        <div className="mx-auto max-w-[1600px] px-6 pt-16">
           <a
             href="/works"
-            className="text-xs uppercase tracking-[0.25em] text-neutral-400 hover:text-neutral-900 transition-colors"
+            className="text-xs uppercase tracking-[0.25em] text-neutral-400 transition-colors hover:text-brand"
           >
-            Back to Works
+            ← Back to works
           </a>
         </div>
 
         {/* Header Card */}
-        <section className="max-w-7xl mx-auto px-6 pt-10 pb-12">
-
-          <div className="
-            bg-white
-            border border-neutral-200
-            rounded-3xl
-            px-6 py-10 md:px-10 md:py-14
-            shadow-[0_20px_60px_rgba(0,0,0,0.04)]
-          ">
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        <section className="mx-auto max-w-[1600px] px-6 pt-8 pb-14">
+          <div>
+            <div className="grid grid-cols-1 gap-10 border-b border-neutral-200/80 pb-14 md:grid-cols-2 md:gap-16">
 
               {/* Left: Title, metadata, PDF link */}
               <div>
                 <motion.h1
-                  className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight"
+                  className="text-4xl font-medium leading-[1.05] tracking-[-0.03em] md:text-6xl"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
@@ -56,7 +48,7 @@ export default function WorkDetailView({ work }: Props) {
                 </motion.h1>
 
                 <motion.div
-                  className="text-xs uppercase tracking-[0.25em] text-neutral-500 mt-4"
+                  className="mt-5 text-xs uppercase tracking-[0.25em] text-brand"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
@@ -77,15 +69,7 @@ export default function WorkDetailView({ work }: Props) {
                       href={work.pdf}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="
-                        inline-block
-                        px-6 py-3
-                        border border-neutral-900
-                        rounded-full
-                        text-sm tracking-wide
-                        hover:bg-neutral-900 hover:text-white
-                        transition-all duration-300
-                      "
+                      className="inline-block rounded-full bg-neutral-900 px-6 py-3 text-sm text-white transition-colors duration-300 hover:bg-brand-ink"
                     >
                       View Project PDF
                     </a>
@@ -128,7 +112,7 @@ export default function WorkDetailView({ work }: Props) {
 
         {/* Gallery */}
         {work.images.length > 0 && (
-          <section className="max-w-[1800px] mx-auto px-6 pb-36">
+          <section className="mx-auto max-w-[1600px] px-6 pb-36">
 
             <motion.div
               className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8"
@@ -146,7 +130,7 @@ export default function WorkDetailView({ work }: Props) {
                   transition={{ duration: 0.6, delay: index * 0.04 }}
                   onClick={() => setSelectedImage(img)}
                 >
-                  <div className="relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+                  <div className="relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-white transition-colors duration-500 group-hover:border-brand/50">
                     <Image
                       src={img}
                       alt={`${work.title} ${index + 1}`}

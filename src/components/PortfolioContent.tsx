@@ -15,55 +15,56 @@ export default function PortfolioContent({ resumeUrl }: Props) {
       <div className="w-full text-neutral-900">
 
         {/* Header */}
-        <section className="max-w-7xl mx-auto px-6 pt-16 md:pt-20 pb-10 md:pb-20 space-y-5 md:space-y-6">
+        <section className="mx-auto max-w-[1600px] px-6 pt-20 pb-14 sm:pt-24">
+          <motion.p
+            className="text-xs uppercase tracking-[0.25em] text-brand"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            Portfolio
+          </motion.p>
+
           <motion.h1
-            className="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-tight"
-            initial={{ opacity: 0, y: 20 }}
+            className="mt-4 max-w-3xl text-4xl font-medium tracking-[-0.03em] md:text-6xl"
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            Portfolio
+            A curated archive of concepts, builds, and finished projects.
           </motion.h1>
 
-          <motion.p
-            className="text-neutral-500 max-w-2xl text-base sm:text-lg leading-relaxed"
+          <motion.div
+            className="mt-10 flex flex-wrap items-center gap-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.08 }}
-          >
-            A curated archive of concepts, builds, and finished projects.
-          </motion.p>
-        </section>
-
-        {/* CTA -> INTERNAL BOOK VIEW */}
-        <section className="max-w-7xl mx-auto px-6 pb-16 md:pb-28">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.12 }}
           >
             <Link
               href="/portfolio/view"
-              className="
-                group inline-flex items-center gap-3 sm:gap-4
-                text-xl sm:text-2xl md:text-3xl
-                font-medium tracking-tight
-                break-words
-              "
+              className="group inline-flex items-center gap-3 rounded-full bg-neutral-900 px-7 py-3.5 text-base text-white transition-colors duration-300 hover:bg-brand-ink"
             >
-              <span className="border-b border-neutral-900 group-hover:pr-6 transition-all duration-300">
-                Open Portfolio Book
-              </span>
-
-              <span className="transition-transform duration-300 group-hover:translate-x-2">
+              Open portfolio book
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
                 →
               </span>
             </Link>
+
+            {resumeUrl && (
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-7 py-3.5 text-base text-neutral-700 transition-colors duration-300 hover:border-brand hover:text-neutral-900"
+              >
+                Download resume
+              </a>
+            )}
           </motion.div>
         </section>
 
-        {/* Contact Tray (desktop/tablet only) */}
-        <section className="hidden md:block max-w-7xl mx-auto px-6 pb-32">
+        {/* Contact */}
+        <section className="mx-auto max-w-[1600px] border-t border-neutral-200/80 px-6 py-16 pb-28 sm:py-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
