@@ -17,19 +17,33 @@ import hillsideVillaModel from "@/assets/hero/hillside-villa-model.png";
 import terracedHouseIso from "@/assets/hero/terraced-house-iso.png";
 
 /**
- * Work photos scattered around the name. Positions are percentages of the hero
- * box, so the composition holds its shape at any width. `depth` is how far a
- * photo drifts with the cursor — bigger reads as nearer the viewer. Every photo
- * sits behind the letters, and the slots keep to the whitespace around them, so
- * the name is never covered.
+ * Work photos scattered around the name.
+ *
+ * They sit in a band above the name and a band below it rather than being
+ * positioned against the hero box. The name's size tracks the viewport WIDTH
+ * while the box's height tracks its HEIGHT, so any absolute placement that
+ * cleared the letters on one screen shape ran straight through them on
+ * another — a wide, short window pushed both bands into the name. Stacked
+ * bands can't overlap it at any aspect ratio.
+ *
+ * `depth` is how far a photo drifts with the cursor — bigger reads as nearer
+ * the viewer. `nudge` shifts a photo down inside its band so the row keeps the
+ * uneven, scattered feel instead of reading as a tidy pair.
  */
 type Slot = {
   image: StaticImageData;
   /** Alt text, and the React key for the slot. */
   label: string;
-  top: string;
-  left: string;
+  band: "top" | "bottom";
+  /**
+   * Width from md up. Capped in px as well as vw: on a wide screen an
+   * unbounded vw width makes the bands tall enough to squeeze the name.
+   */
   width: string;
+  /** Width below md, where the bands get a bigger share of a smaller screen. */
+  mobileWidth: string;
+  /** Vertical offset within the band, as a share of the photo's own height. */
+  nudge?: string;
   rotate: number;
   depth: number;
   /**
@@ -37,37 +51,49 @@ type Slot = {
    * of a rectangular one, since there is no photo edge to cast it.
    */
   cutout?: boolean;
-  /**
-   * Phone placement. Only the slots that carry one are kept below md — the
-   * rest would collide with the name at that width.
-   */
-  mobile?: { top: string; left: string; width: string };
 };
 
 const SLOTS: Slot[] = [
   {
     image: framingStudyModel,
     label: "Framing study model",
-    top: "-2%", left: "1%", width: "30vw", rotate: 3, depth: 0.55, cutout: true,
-    mobile: { top: "1%", left: "2%", width: "44vw" },
+    band: "top",
+    width: "min(26vw, 400px)",
+    mobileWidth: "44vw",
+    rotate: 3,
+    depth: 0.55,
+    cutout: true,
   },
   {
     image: hillsideVillaModel,
     label: "Hillside villa site model",
-    top: "-6%", left: "62%", width: "26vw", rotate: -2, depth: 0.85, cutout: true,
-    mobile: { top: "0%", left: "52%", width: "40vw" },
+    band: "top",
+    width: "min(19vw, 280px)",
+    mobileWidth: "42vw",
+    nudge: "-6%",
+    rotate: -2,
+    depth: 0.85,
+    cutout: true,
   },
   {
     image: terracedHouseIso,
     label: "Terraced house isometric model",
-    top: "60%", left: "0%", width: "18vw", rotate: -4, depth: 0.7, cutout: true,
-    mobile: { top: "68%", left: "4%", width: "24vw" },
+    band: "bottom",
+    width: "min(12vw, 175px)",
+    mobileWidth: "26vw",
+    nudge: "6%",
+    rotate: -4,
+    depth: 0.7,
+    cutout: true,
   },
   {
     image: courtyardRender,
     label: "Courtyard render",
-    top: "58%", left: "78%", width: "21vw", rotate: -2.5, depth: 1.1,
-    mobile: { top: "72%", left: "40%", width: "44vw" },
+    band: "bottom",
+    width: "min(22vw, 450px)",
+    mobileWidth: "46vw",
+    rotate: -2.5,
+    depth: 1.1,
   },
 ];
 
@@ -81,7 +107,7 @@ export default function HeroScatter({
   const reduceMotion = useReducedMotion();
   const boxRef = useRef<HTMLDivElement>(null);
 
-  // -0.5 .. 0.5 across the hero, smoothed. Every card reads off these two.
+  // -0.5 .. 0.5 across the hero, smoothed. Every photo reads off these two.
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const smoothX = useSpring(pointerX, { stiffness: 60, damping: 20, mass: 0.6 });
@@ -105,6 +131,20 @@ export default function HeroScatter({
 
   const words = name.trim().split(/\s+/);
 
+  const band = (which: "top" | "bottom") => (
+    <div className="flex items-start justify-between gap-[6vw]">
+      {SLOTS.filter((slot) => slot.band === which).map((slot) => (
+        <PhotoTile
+          key={slot.label}
+          slot={slot}
+          index={SLOTS.indexOf(slot)}
+          pointerX={smoothX}
+          pointerY={smoothY}
+        />
+      ))}
+    </div>
+  );
+
   return (
     <section
       ref={boxRef}
@@ -112,22 +152,11 @@ export default function HeroScatter({
       onPointerLeave={handlePointerLeave}
       className="relative w-full px-6 pt-6 pb-12 sm:px-10 sm:pb-16 lg:px-[3vw]"
     >
-      <div className="relative h-[70vh] min-h-[460px] sm:h-[68vh] lg:h-[calc(100svh-15rem)] lg:min-h-[520px]">
-        {/* Photos — one layer, always behind the letters */}
-        <div className="absolute inset-0">
-          {SLOTS.map((slot, index) => (
-            <PhotoTile
-              key={slot.label}
-              slot={slot}
-              index={index}
-              pointerX={smoothX}
-              pointerY={smoothY}
-            />
-          ))}
-        </div>
+      <div className="flex min-h-[calc(100svh-13rem)] flex-col justify-center gap-10 sm:gap-12 lg:gap-14">
+        {band("top")}
 
-        {/* The name, above every photo */}
-        <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-center">
+        {/* The name, between the two bands — never under a photo */}
+        <div className="pointer-events-none">
           {words.map((word, index) => (
             <motion.h1
               key={word + index}
@@ -135,7 +164,7 @@ export default function HeroScatter({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.05 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                fontSize: "clamp(3.5rem, 17vw, 26rem)",
+                fontSize: "clamp(3.5rem, 17vw, 24rem)",
                 lineHeight: 0.82,
                 // Alternate words indent, so the block reads as a composition
                 // rather than a stack.
@@ -147,6 +176,8 @@ export default function HeroScatter({
             </motion.h1>
           ))}
         </div>
+
+        {band("bottom")}
       </div>
 
       {jobTitle && (
@@ -154,7 +185,7 @@ export default function HeroScatter({
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="relative mt-8 text-xs uppercase tracking-[0.3em] text-neutral-500 sm:text-sm"
+          className="relative mt-10 text-xs uppercase tracking-[0.3em] text-neutral-500 sm:text-sm"
         >
           {jobTitle}
         </motion.p>
@@ -179,17 +210,11 @@ function PhotoTile({
 
   return (
     <motion.div
-      className={`absolute top-[var(--m-top)] left-[var(--m-left)] w-[var(--m-width)] md:top-[var(--top)] md:left-[var(--left)] md:w-[var(--width)] ${
-        slot.mobile ? "" : "hidden md:block"
-      }`}
+      className="w-[var(--m-width)] shrink-0 md:w-[var(--width)]"
       style={
         {
-          "--top": slot.top,
-          "--left": slot.left,
           "--width": slot.width,
-          "--m-top": slot.mobile?.top ?? slot.top,
-          "--m-left": slot.mobile?.left ?? slot.left,
-          "--m-width": slot.mobile?.width ?? slot.width,
+          "--m-width": slot.mobileWidth,
           x,
           y,
         } as React.CSSProperties
@@ -199,7 +224,7 @@ function PhotoTile({
       transition={{ duration: 0.9, delay: 0.15 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
-        style={{ rotate: slot.rotate }}
+        style={{ rotate: slot.rotate, y: slot.nudge ?? 0 }}
         whileHover={{ scale: 1.06, rotate: 0, zIndex: 10 }}
         transition={{ type: "spring", stiffness: 220, damping: 22 }}
         className="group"
