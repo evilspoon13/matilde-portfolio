@@ -12,9 +12,9 @@ import Image, { type StaticImageData } from "next/image";
 import { useCallback, useRef } from "react";
 
 import courtyardRender from "@/assets/hero/courtyard-render.jpg";
-import framingStudyModel from "@/assets/hero/framing-study-model.jpg";
-import hillsideVillaModel from "@/assets/hero/hillside-villa-model.jpg";
-import terracedHouseIso from "@/assets/hero/terraced-house-iso.jpg";
+import framingStudyModel from "@/assets/hero/framing-study-model.png";
+import hillsideVillaModel from "@/assets/hero/hillside-villa-model.png";
+import terracedHouseIso from "@/assets/hero/terraced-house-iso.png";
 
 /**
  * Work photos scattered around the name. Positions are percentages of the hero
@@ -33,10 +33,10 @@ type Slot = {
   rotate: number;
   depth: number;
   /**
-   * Crops the photo to this aspect ratio instead of letting it keep its own —
-   * for sources that carry a lot of empty background.
+   * A background-removed PNG: it gets a shadow that follows the cutout instead
+   * of a rectangular one, since there is no photo edge to cast it.
    */
-  aspect?: string;
+  cutout?: boolean;
   /**
    * Phone placement. Only the slots that carry one are kept below md — the
    * rest would collide with the name at that width.
@@ -48,21 +48,20 @@ const SLOTS: Slot[] = [
   {
     image: framingStudyModel,
     label: "Framing study model",
-    top: "0%", left: "3%", width: "19vw", rotate: 3, depth: 0.55,
-    mobile: { top: "1%", left: "2%", width: "46vw" },
+    top: "-2%", left: "1%", width: "30vw", rotate: 3, depth: 0.55, cutout: true,
+    mobile: { top: "0%", left: "0%", width: "62vw" },
   },
   {
     image: hillsideVillaModel,
     label: "Hillside villa site model",
-    top: "-2%", left: "67%", width: "16vw", rotate: -2, depth: 0.85,
-    mobile: { top: "5%", left: "54%", width: "40vw" },
+    top: "-6%", left: "62%", width: "26vw", rotate: -2, depth: 0.85, cutout: true,
+    mobile: { top: "2%", left: "46%", width: "56vw" },
   },
   {
     image: terracedHouseIso,
     label: "Terraced house isometric model",
-    top: "72%", left: "1%", width: "13vw", rotate: -4, depth: 0.7,
-    aspect: "4 / 3",
-    mobile: { top: "76%", left: "3%", width: "36vw" },
+    top: "60%", left: "0%", width: "18vw", rotate: -4, depth: 0.7, cutout: true,
+    mobile: { top: "70%", left: "1%", width: "46vw" },
   },
   {
     image: courtyardRender,
@@ -205,31 +204,18 @@ function PhotoTile({
         transition={{ type: "spring", stiffness: 220, damping: 22 }}
         className="group"
       >
-        {slot.aspect ? (
-          <div
-            className="relative w-full shadow-[0_18px_50px_rgba(15,23,42,0.14)]"
-            style={{ aspectRatio: slot.aspect }}
-          >
-            <Image
-              src={slot.image}
-              alt={slot.label}
-              fill
-              sizes="(min-width: 768px) 25vw, 50vw"
-              placeholder="blur"
-              priority
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <Image
-            src={slot.image}
-            alt={slot.label}
-            sizes="(min-width: 768px) 25vw, 50vw"
-            placeholder="blur"
-            priority
-            className="h-auto w-full shadow-[0_18px_50px_rgba(15,23,42,0.14)]"
-          />
-        )}
+        <Image
+          src={slot.image}
+          alt={slot.label}
+          sizes="(min-width: 768px) 25vw, 50vw"
+          placeholder="blur"
+          priority
+          className={
+            slot.cutout
+              ? "h-auto w-full drop-shadow-[0_16px_28px_rgba(15,23,42,0.22)]"
+              : "h-auto w-full shadow-[0_18px_50px_rgba(15,23,42,0.14)]"
+          }
+        />
       </motion.div>
     </motion.div>
   );
