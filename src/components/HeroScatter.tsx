@@ -8,33 +8,35 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import {
-  Box,
-  Building2,
-  DraftingCompass,
-  Landmark,
-  Layers,
-  PencilRuler,
-  Ruler,
-  type LucideIcon,
-} from "lucide-react";
+import Image, { type StaticImageData } from "next/image";
 import { useCallback, useRef } from "react";
 
+import courtyardRender from "@/assets/hero/courtyard-render.jpg";
+import framingStudyModel from "@/assets/hero/framing-study-model.jpg";
+import hillsideVillaModel from "@/assets/hero/hillside-villa-model.jpg";
+import terracedHouseIso from "@/assets/hero/terraced-house-iso.jpg";
+
 /**
- * Icon cards scattered around the name. Positions are percentages of the hero
+ * Work photos scattered around the name. Positions are percentages of the hero
  * box, so the composition holds its shape at any width. `depth` is how far a
- * card drifts with the cursor — bigger reads as nearer the viewer — and `layer`
- * decides whether the letters run over the card or under it.
+ * photo drifts with the cursor — bigger reads as nearer the viewer. Every photo
+ * sits behind the letters, and the slots keep to the whitespace around them, so
+ * the name is never covered.
  */
 type Slot = {
-  icon: LucideIcon;
+  image: StaticImageData;
+  /** Alt text, and the React key for the slot. */
   label: string;
   top: string;
   left: string;
   width: string;
   rotate: number;
   depth: number;
-  layer: "front" | "back";
+  /**
+   * Crops the photo to this aspect ratio instead of letting it keep its own —
+   * for sources that carry a lot of empty background.
+   */
+  aspect?: string;
   /**
    * Phone placement. Only the slots that carry one are kept below md — the
    * rest would collide with the name at that width.
@@ -44,42 +46,29 @@ type Slot = {
 
 const SLOTS: Slot[] = [
   {
-    icon: DraftingCompass,
-    label: "Drafting",
-    top: "4%", left: "7%", width: "5.5vw", rotate: 3, depth: 0.55, layer: "back",
+    image: framingStudyModel,
+    label: "Framing study model",
+    top: "0%", left: "3%", width: "19vw", rotate: 3, depth: 0.55,
+    mobile: { top: "1%", left: "2%", width: "46vw" },
   },
   {
-    icon: Building2,
-    label: "Massing",
-    top: "4%", left: "70%", width: "6vw", rotate: -2, depth: 0.8, layer: "front",
-    mobile: { top: "4%", left: "58%", width: "15vw" },
+    image: hillsideVillaModel,
+    label: "Hillside villa site model",
+    top: "-2%", left: "67%", width: "16vw", rotate: -2, depth: 0.85,
+    mobile: { top: "5%", left: "54%", width: "40vw" },
   },
   {
-    icon: Layers,
-    label: "Section",
-    top: "64%", left: "82%", width: "6vw", rotate: -2.5, depth: 1.05, layer: "front",
-    mobile: { top: "74%", left: "56%", width: "16vw" },
+    image: terracedHouseIso,
+    label: "Terraced house isometric model",
+    top: "72%", left: "1%", width: "13vw", rotate: -4, depth: 0.7,
+    aspect: "4 / 3",
+    mobile: { top: "76%", left: "3%", width: "36vw" },
   },
   {
-    icon: PencilRuler,
-    label: "Detail",
-    top: "46%", left: "6%", width: "5.5vw", rotate: -4, depth: 0.7, layer: "back",
-  },
-  {
-    icon: Box,
-    label: "Model",
-    top: "-3%", left: "36%", width: "5vw", rotate: -2.5, depth: 1.0, layer: "front",
-    mobile: { top: "34%", left: "6%", width: "14vw" },
-  },
-  {
-    icon: Ruler,
-    label: "Scale",
-    top: "26%", left: "88%", width: "5vw", rotate: 2.5, depth: 1.15, layer: "front",
-  },
-  {
-    icon: Landmark,
-    label: "Context",
-    top: "74%", left: "16%", width: "4.5vw", rotate: 4, depth: 0.9, layer: "back",
+    image: courtyardRender,
+    label: "Courtyard render",
+    top: "58%", left: "78%", width: "21vw", rotate: -2.5, depth: 1.1,
+    mobile: { top: "79%", left: "45%", width: "48vw" },
   },
 ];
 
@@ -117,30 +106,29 @@ export default function HeroScatter({
 
   const words = name.trim().split(/\s+/);
 
-  const renderCards = (layer: "front" | "back") =>
-    SLOTS.filter((slot) => slot.layer === layer).map((slot) => (
-      <IconCard
-        key={slot.label}
-        slot={slot}
-        index={SLOTS.indexOf(slot)}
-        pointerX={smoothX}
-        pointerY={smoothY}
-      />
-    ));
-
   return (
     <section
       ref={boxRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      className="relative mx-auto w-full max-w-[1600px] px-6 pt-6 pb-12 sm:pb-16"
+      className="relative w-full px-6 pt-6 pb-12 sm:px-10 sm:pb-16 lg:px-[3vw]"
     >
       <div className="relative h-[62vh] min-h-[400px] sm:h-[66vh] lg:h-[calc(100svh-15rem)] lg:min-h-[520px]">
-        {/* Cards the letters run over */}
-        <div className="absolute inset-0">{renderCards("back")}</div>
+        {/* Photos — one layer, always behind the letters */}
+        <div className="absolute inset-0">
+          {SLOTS.map((slot, index) => (
+            <PhotoTile
+              key={slot.label}
+              slot={slot}
+              index={index}
+              pointerX={smoothX}
+              pointerY={smoothY}
+            />
+          ))}
+        </div>
 
-        {/* The name */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col justify-center">
+        {/* The name, above every photo */}
+        <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-center">
           {words.map((word, index) => (
             <motion.h1
               key={word + index}
@@ -160,9 +148,6 @@ export default function HeroScatter({
             </motion.h1>
           ))}
         </div>
-
-        {/* Cards that sit over the letters */}
-        <div className="absolute inset-0">{renderCards("front")}</div>
       </div>
 
       {jobTitle && (
@@ -179,7 +164,7 @@ export default function HeroScatter({
   );
 }
 
-function IconCard({
+function PhotoTile({
   slot,
   index,
   pointerX,
@@ -192,7 +177,6 @@ function IconCard({
 }) {
   const x = useTransform(pointerX, (value) => value * slot.depth * 64);
   const y = useTransform(pointerY, (value) => value * slot.depth * 40);
-  const Icon = slot.icon;
 
   return (
     <motion.div
@@ -217,14 +201,35 @@ function IconCard({
     >
       <motion.div
         style={{ rotate: slot.rotate }}
-        whileHover={{ scale: 1.12, rotate: 0, zIndex: 30 }}
+        whileHover={{ scale: 1.06, rotate: 0, zIndex: 10 }}
         transition={{ type: "spring", stiffness: 220, damping: 22 }}
         className="group"
       >
-        <Icon
-          className="h-auto w-full text-neutral-400 transition-colors duration-300 group-hover:text-brand"
-          strokeWidth={1}
-        />
+        {slot.aspect ? (
+          <div
+            className="relative w-full shadow-[0_18px_50px_rgba(15,23,42,0.14)]"
+            style={{ aspectRatio: slot.aspect }}
+          >
+            <Image
+              src={slot.image}
+              alt={slot.label}
+              fill
+              sizes="(min-width: 768px) 25vw, 50vw"
+              placeholder="blur"
+              priority
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <Image
+            src={slot.image}
+            alt={slot.label}
+            sizes="(min-width: 768px) 25vw, 50vw"
+            placeholder="blur"
+            priority
+            className="h-auto w-full shadow-[0_18px_50px_rgba(15,23,42,0.14)]"
+          />
+        )}
       </motion.div>
     </motion.div>
   );

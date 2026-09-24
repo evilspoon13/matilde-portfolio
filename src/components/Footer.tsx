@@ -13,7 +13,7 @@ const LINKS = [
 export default function Footer({ resumeUrl }: Props) {
   return (
     <footer className="w-full border-t border-neutral-200/80 bg-white/60">
-      <div className="mx-auto max-w-[1600px] px-6 py-16">
+      <div className="w-full px-6 py-16 sm:px-10 lg:px-[3vw]">
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm space-y-3">
             <Link

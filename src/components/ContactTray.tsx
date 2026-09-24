@@ -12,32 +12,32 @@ export default function ContactTray({ resumeUrl }: Props) {
       id: "email",
       label: "Email",
       href: "mailto:matilde.crisp@tamu.edu",
-      icon: <RiMailLine className="h-4 w-4" />,
+      icon: <RiMailLine className="h-5 w-5" />,
       external: false,
     },
     {
       id: "linkedin",
       label: "LinkedIn",
       href: "https://www.linkedin.com/in/matilde-crisp-a34a25254/",
-      icon: <RiLinkedinBoxFill className="h-4 w-4" />,
+      icon: <RiLinkedinBoxFill className="h-5 w-5" />,
       external: true,
     },
     {
       id: "resume",
       label: "Resume",
       href: resumeUrl || "#",
-      icon: <RiFileTextLine className="h-4 w-4" />,
+      icon: <RiFileTextLine className="h-5 w-5" />,
       external: true,
     },
   ];
 
   return (
-    <div className="flex flex-col gap-10 rounded-3xl bg-brand-soft px-8 py-12 sm:px-12 sm:py-14 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-12 rounded-3xl bg-brand-soft px-8 py-14 sm:px-14 sm:py-20 lg:flex-row lg:items-center lg:justify-between">
       <div className="space-y-3">
-        <p className="text-xs uppercase tracking-[0.25em] text-brand-ink">
+        <p className="text-sm uppercase tracking-[0.25em] text-brand-ink sm:text-base">
           Contact
         </p>
-        <h2 className="max-w-xl text-2xl font-medium leading-tight tracking-tight sm:text-4xl">
+        <h2 className="max-w-[16ch] text-[clamp(2rem,3.6vw,5rem)] font-normal leading-[1.05] tracking-[-0.03em]">
           Open to studio work, internships, and collaborations.
         </h2>
       </div>
@@ -49,7 +49,7 @@ export default function ContactTray({ resumeUrl }: Props) {
             href={link.href}
             target={link.external ? "_blank" : undefined}
             rel={link.external ? "noopener noreferrer" : undefined}
-            className={`inline-flex items-center gap-2.5 rounded-full px-6 py-3 text-sm transition-colors duration-300 ${
+            className={`inline-flex items-center gap-3 rounded-full px-8 py-4 text-base transition-colors duration-300 sm:text-lg ${
               link.id === "email"
                 ? "bg-brand text-white hover:bg-brand-ink"
                 : "border border-brand/30 bg-white/70 text-neutral-700 hover:border-brand hover:text-neutral-900"

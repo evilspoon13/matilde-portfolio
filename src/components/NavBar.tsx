@@ -34,7 +34,7 @@ export default function NavBar() {
           : "border-b border-transparent"
       }`}
     >
-      <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center justify-between px-6">
+      <div className="flex h-16 w-full items-center justify-between px-6 sm:px-10 lg:px-[3vw]">
         <Link
           href="/"
           className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-900 transition-opacity hover:opacity-60"
