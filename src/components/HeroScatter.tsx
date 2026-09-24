@@ -49,25 +49,25 @@ const SLOTS: Slot[] = [
     image: framingStudyModel,
     label: "Framing study model",
     top: "-2%", left: "1%", width: "30vw", rotate: 3, depth: 0.55, cutout: true,
-    mobile: { top: "0%", left: "0%", width: "62vw" },
+    mobile: { top: "1%", left: "2%", width: "44vw" },
   },
   {
     image: hillsideVillaModel,
     label: "Hillside villa site model",
     top: "-6%", left: "62%", width: "26vw", rotate: -2, depth: 0.85, cutout: true,
-    mobile: { top: "2%", left: "46%", width: "56vw" },
+    mobile: { top: "0%", left: "52%", width: "40vw" },
   },
   {
     image: terracedHouseIso,
     label: "Terraced house isometric model",
     top: "60%", left: "0%", width: "18vw", rotate: -4, depth: 0.7, cutout: true,
-    mobile: { top: "70%", left: "1%", width: "46vw" },
+    mobile: { top: "68%", left: "4%", width: "24vw" },
   },
   {
     image: courtyardRender,
     label: "Courtyard render",
     top: "58%", left: "78%", width: "21vw", rotate: -2.5, depth: 1.1,
-    mobile: { top: "79%", left: "45%", width: "48vw" },
+    mobile: { top: "72%", left: "40%", width: "44vw" },
   },
 ];
 
@@ -112,7 +112,7 @@ export default function HeroScatter({
       onPointerLeave={handlePointerLeave}
       className="relative w-full px-6 pt-6 pb-12 sm:px-10 sm:pb-16 lg:px-[3vw]"
     >
-      <div className="relative h-[62vh] min-h-[400px] sm:h-[66vh] lg:h-[calc(100svh-15rem)] lg:min-h-[520px]">
+      <div className="relative h-[70vh] min-h-[460px] sm:h-[68vh] lg:h-[calc(100svh-15rem)] lg:min-h-[520px]">
         {/* Photos — one layer, always behind the letters */}
         <div className="absolute inset-0">
           {SLOTS.map((slot, index) => (
