@@ -169,7 +169,7 @@ export default function HeroScatter({
       onPointerLeave={handlePointerLeave}
       className="relative w-full px-6 pt-6 pb-12 sm:px-10 sm:pb-16 lg:px-[3vw]"
     >
-      <div className="flex min-h-[calc(100svh-13rem)] flex-col justify-center gap-10 sm:gap-12 lg:gap-[3vh]">
+      <div className="flex min-h-[calc(100svh-13rem)] flex-col justify-center gap-10 sm:gap-12 lg:gap-[max(2.25rem,3vh)]">
         {band("top")}
 
         {/* The name, between the two bands — never under a photo */}
