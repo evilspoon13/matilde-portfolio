@@ -109,7 +109,6 @@ const SLOTS: Slot[] = [
     mobileWidth: "46vw",
     offset: "12%",
     mobileOffset: "14%",
-    nudge: "-4%",
     rotate: -2,
     depth: 1.1,
   },
