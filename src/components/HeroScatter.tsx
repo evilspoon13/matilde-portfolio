@@ -26,9 +26,14 @@ import terracedHouseIso from "@/assets/hero/terraced-house-iso.png";
  * another — a wide, short window pushed both bands into the name. Stacked
  * bands can't overlap it at any aspect ratio.
  *
+ * Within a band, `offset` is the gap before a photo as a share of the band's
+ * width, so the pair can be clustered and slid left or right rather than pinned
+ * to the two corners. `nudge` shifts a photo vertically inside its band. Top
+ * band sits left of centre, bottom band right of it, so the composition drifts
+ * diagonally instead of reading as a symmetrical frame.
+ *
  * `depth` is how far a photo drifts with the cursor — bigger reads as nearer
- * the viewer. `nudge` shifts a photo down inside its band so the row keeps the
- * uneven, scattered feel instead of reading as a tidy pair.
+ * the viewer.
  */
 type Slot = {
   image: StaticImageData;
@@ -36,12 +41,16 @@ type Slot = {
   label: string;
   band: "top" | "bottom";
   /**
-   * Width from md up. Capped in px as well as vw: on a wide screen an
-   * unbounded vw width makes the bands tall enough to squeeze the name.
+   * Width from md up. Capped against vh as well as vw, since the bands and the
+   * name have to share the screen's height: the vh term is the aspect ratio
+   * times the share of the viewport height a band may take.
    */
   width: string;
   /** Width below md, where the bands get a bigger share of a smaller screen. */
   mobileWidth: string;
+  /** Space before the photo within its band, as a share of the band's width. */
+  offset: string;
+  mobileOffset: string;
   /** Vertical offset within the band, as a share of the photo's own height. */
   nudge?: string;
   rotate: number;
@@ -58,9 +67,11 @@ const SLOTS: Slot[] = [
     image: framingStudyModel,
     label: "Framing study model",
     band: "top",
-    width: "min(26vw, 400px)",
+    width: "min(30vw, 36vh, 560px)",
     mobileWidth: "44vw",
-    rotate: 3,
+    offset: "1%",
+    mobileOffset: "0%",
+    rotate: 4,
     depth: 0.55,
     cutout: true,
   },
@@ -68,10 +79,12 @@ const SLOTS: Slot[] = [
     image: hillsideVillaModel,
     label: "Hillside villa site model",
     band: "top",
-    width: "min(19vw, 280px)",
+    width: "min(23vw, 25vh, 390px)",
     mobileWidth: "42vw",
-    nudge: "-6%",
-    rotate: -2,
+    offset: "15%",
+    mobileOffset: "8%",
+    nudge: "-16%",
+    rotate: -3.5,
     depth: 0.85,
     cutout: true,
   },
@@ -79,10 +92,12 @@ const SLOTS: Slot[] = [
     image: terracedHouseIso,
     label: "Terraced house isometric model",
     band: "bottom",
-    width: "min(12vw, 175px)",
+    width: "min(15vw, 15vh, 250px)",
     mobileWidth: "26vw",
+    offset: "38%",
+    mobileOffset: "4%",
     nudge: "6%",
-    rotate: -4,
+    rotate: -6,
     depth: 0.7,
     cutout: true,
   },
@@ -90,9 +105,12 @@ const SLOTS: Slot[] = [
     image: courtyardRender,
     label: "Courtyard render",
     band: "bottom",
-    width: "min(22vw, 450px)",
+    width: "min(30vw, 40vh, 640px)",
     mobileWidth: "46vw",
-    rotate: -2.5,
+    offset: "12%",
+    mobileOffset: "14%",
+    nudge: "-4%",
+    rotate: -2,
     depth: 1.1,
   },
 ];
@@ -132,7 +150,7 @@ export default function HeroScatter({
   const words = name.trim().split(/\s+/);
 
   const band = (which: "top" | "bottom") => (
-    <div className="flex items-start justify-between gap-[6vw]">
+    <div className="flex items-start">
       {SLOTS.filter((slot) => slot.band === which).map((slot) => (
         <PhotoTile
           key={slot.label}
@@ -152,7 +170,7 @@ export default function HeroScatter({
       onPointerLeave={handlePointerLeave}
       className="relative w-full px-6 pt-6 pb-12 sm:px-10 sm:pb-16 lg:px-[3vw]"
     >
-      <div className="flex min-h-[calc(100svh-13rem)] flex-col justify-center gap-10 sm:gap-12 lg:gap-14">
+      <div className="flex min-h-[calc(100svh-13rem)] flex-col justify-center gap-10 sm:gap-12 lg:gap-[3vh]">
         {band("top")}
 
         {/* The name, between the two bands — never under a photo */}
@@ -164,7 +182,7 @@ export default function HeroScatter({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.05 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                fontSize: "clamp(3.5rem, 17vw, 24rem)",
+                fontSize: "clamp(3.5rem, min(17vw, 21vh), 22rem)",
                 lineHeight: 0.82,
                 // Alternate words indent, so the block reads as a composition
                 // rather than a stack.
@@ -185,7 +203,7 @@ export default function HeroScatter({
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="relative mt-10 text-xs uppercase tracking-[0.3em] text-neutral-500 sm:text-sm"
+          className="relative mt-16 text-xs uppercase tracking-[0.3em] text-neutral-500 sm:text-sm lg:mt-20"
         >
           {jobTitle}
         </motion.p>
@@ -210,11 +228,13 @@ function PhotoTile({
 
   return (
     <motion.div
-      className="w-[var(--m-width)] shrink-0 md:w-[var(--width)]"
+      className="ml-[var(--m-offset)] w-[var(--m-width)] shrink-0 md:ml-[var(--offset)] md:w-[var(--width)]"
       style={
         {
           "--width": slot.width,
           "--m-width": slot.mobileWidth,
+          "--offset": slot.offset,
+          "--m-offset": slot.mobileOffset,
           x,
           y,
         } as React.CSSProperties
