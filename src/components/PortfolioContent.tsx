@@ -3,13 +3,14 @@
 import ContactTray from "@/components/ContactTray";
 import Transition from "@/components/Transition";
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 type Props = {
   resumeUrl?: string;
+  /** External link to the portfolio book, editable in /admin. */
+  portfolioUrl?: string;
 };
 
-export default function PortfolioContent({ resumeUrl }: Props) {
+export default function PortfolioContent({ resumeUrl, portfolioUrl }: Props) {
   return (
     <Transition>
       <div className="w-full text-neutral-900">
@@ -40,15 +41,19 @@ export default function PortfolioContent({ resumeUrl }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.12 }}
           >
-            <Link
-              href="/portfolio/view"
-              className="group inline-flex items-center gap-3 rounded-full bg-neutral-900 px-7 py-3.5 text-base text-white transition-colors duration-300 hover:bg-brand-ink"
-            >
-              Open portfolio book
-              <span className="transition-transform duration-300 group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
+            {portfolioUrl && (
+              <a
+                href={portfolioUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-3 rounded-full bg-neutral-900 px-7 py-3.5 text-base text-white transition-colors duration-300 hover:bg-brand-ink"
+              >
+                Open portfolio book
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </a>
+            )}
 
             {resumeUrl && (
               <a

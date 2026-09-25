@@ -4,7 +4,7 @@ import Image from "next/image";
 import Transition from "@/components/Transition";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Work } from "@/types/notion";
+import { Work } from "@/types/content";
 
 type Props = {
   work: Work;

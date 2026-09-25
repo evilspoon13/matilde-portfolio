@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 type Props = {
-  /** Stable proxied URL from Notion, or "" when no background is set. */
+  /** Public R2 URL, or "" when no background is set. */
   src?: string;
 };
 

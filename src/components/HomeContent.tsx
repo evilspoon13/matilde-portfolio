@@ -6,7 +6,7 @@ import HeroScatter from "@/components/HeroScatter";
 import Transition from "@/components/Transition";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { About, Education, Experience } from "@/types/notion";
+import { About, Education, Experience } from "@/types/content";
 
 type Props = {
   about: About;
@@ -14,17 +14,24 @@ type Props = {
   experience: Experience[];
 };
 
+/**
+ * Reads the year straight off the ISO string rather than via `new Date()`.
+ * A date-only string parses as UTC midnight, so `getFullYear()` in any
+ * negative UTC offset reports the previous year — "2024-01-01" rendered as
+ * 2023 for anyone in US time zones.
+ */
+const yearOf = (isoDate: string) => isoDate.slice(0, 4);
+
 const formatDateRange = (
   startDate: string,
   endDate: string,
   current: boolean
 ) => {
   if (!startDate) return "";
-  const start = new Date(startDate).getFullYear();
+  const start = yearOf(startDate);
   if (current) return `${start} - Present`;
   if (!endDate) return `${start}`;
-  const end = new Date(endDate).getFullYear();
-  return `${start} - ${end}`;
+  return `${start} - ${yearOf(endDate)}`;
 };
 
 /** Small caps label that opens every section below the hero. */
@@ -37,7 +44,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export default function HomeContent({ about, education, experience }: Props) {
-  // Notion's short "aboutText" is often empty; the opening of the longer bio
+  // The short "aboutText" is often empty; the opening of the longer bio
   // reads well as the headline statement, so fall back to it — and when we do,
   // the About section picks up from where the headline left off instead of
   // repeating those sentences.
